@@ -1,0 +1,268 @@
+/* ==========================================================================
+   Nota — landing page
+   Палитра и шрифты объявлены как CSS-переменные и подключены в tailwind.config
+   (см. index.html) через theme.extend.colors / fontFamily — так Tailwind
+   utility-классы (bg-bg, text-ink, font-display…) остаются единственным
+   способом верстки, а здесь только то, что классами не выразить.
+
+   Переменные хранят RGB-каналы через пробел (не готовый hex/rgb()), потому
+   что так их читает и tailwind.config (rgb(var(--x) / <alpha-value>) —
+   официальный паттерн Tailwind для CSS-переменных, поддерживающий модификаторы
+   прозрачности вроде bg-coral/70), и обычный CSS ниже — оборачивая в rgb(...).
+   ========================================================================== */
+
+:root {
+  --bg: 247 248 252;
+  --bg-alt: 238 241 251;
+  --card: 255 255 255;
+  --ink: 30 34 51;
+  --ink-soft: 92 97 120;
+  --ink-faint: 146 150 171;
+  --line: 227 230 243;
+
+  --violet: 108 99 242;
+  --violet-soft: 237 235 254;
+  --mint: 34 183 149;
+  --mint-soft: 223 247 239;
+  --coral: 255 122 89;
+  --coral-soft: 255 231 222;
+  --amber: 238 171 46;
+  --amber-soft: 255 243 218;
+}
+
+/* Прогресс-бар прокрутки = тот же язык, что и индикатор уровня записи в
+   приложении: зелёная → жёлтая → красная зона. Читаешь страницу — как будто
+   диктуешь. */
+@view-transition {
+  navigation: auto;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+body {
+  background: rgb(var(--bg));
+  color: rgb(var(--ink));
+  font-feature-settings: "ss01" 1, "cv05" 1;
+}
+
+::selection {
+  background: rgb(var(--violet));
+  color: #fff;
+}
+
+/* -------------------------------------------------------------------- */
+/* Скролл-прогресс — метр в шапке страницы                              */
+/* -------------------------------------------------------------------- */
+#scroll-meter {
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: 3px;
+  z-index: 60;
+  transform-origin: left;
+  transform: scaleX(0);
+  background: linear-gradient(
+    90deg,
+    rgb(var(--mint)) 0%,
+    rgb(var(--mint)) 55%,
+    rgb(var(--amber)) 78%,
+    rgb(var(--coral)) 100%
+  );
+  will-change: transform;
+}
+
+/* -------------------------------------------------------------------- */
+/* Reveal-on-scroll                                                      */
+/* -------------------------------------------------------------------- */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-stagger > * {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal-stagger.is-visible > * {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-stagger.is-visible > *:nth-child(1) { transition-delay: 0ms; }
+.reveal-stagger.is-visible > *:nth-child(2) { transition-delay: 90ms; }
+.reveal-stagger.is-visible > *:nth-child(3) { transition-delay: 180ms; }
+.reveal-stagger.is-visible > *:nth-child(4) { transition-delay: 270ms; }
+.reveal-stagger.is-visible > *:nth-child(5) { transition-delay: 360ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .reveal-stagger > * {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* -------------------------------------------------------------------- */
+/* Hero: живая панель уровня записи                                     */
+/* -------------------------------------------------------------------- */
+.meter-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 100%;
+}
+.meter-bars span {
+  flex: 1 1 auto;
+  height: 100%;
+  border-radius: 3px;
+  background: rgb(var(--mint));
+  animation: meter-pulse 1.6s ease-in-out infinite;
+  animation-play-state: running;
+}
+@keyframes meter-pulse {
+  0%, 100% { transform: scaleY(var(--h-min, 0.25)); }
+  50% { transform: scaleY(var(--h-max, 1)); }
+}
+.meter-bars span { transform-origin: bottom; }
+
+@media (prefers-reduced-motion: reduce) {
+  .meter-bars span {
+    animation: none;
+    transform: scaleY(var(--h-max, 0.7));
+  }
+}
+
+/* Печатающийся transcript в hero-мокапе */
+.typewriter-caret {
+  display: inline-block;
+  width: 2px;
+  background: rgb(var(--violet));
+  animation: caret-blink 1s step-end infinite;
+}
+@keyframes caret-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .typewriter-caret { animation: none; }
+}
+
+/* -------------------------------------------------------------------- */
+/* dBFS-метр (секция «Индикатор уровня»)                                */
+/* -------------------------------------------------------------------- */
+.dbfs-scale {
+  background: linear-gradient(
+    to top,
+    rgb(var(--coral)) 0%,
+    rgb(var(--coral)) 35%,
+    rgb(var(--mint)) 35%,
+    rgb(var(--mint)) 82%,
+    rgb(var(--amber)) 82%,
+    rgb(var(--amber)) 100%
+  );
+}
+.dbfs-peak {
+  animation: peak-hold 3.2s ease-in-out infinite;
+}
+@keyframes peak-hold {
+  0%, 8% { bottom: 40%; }
+  45%, 55% { bottom: 78%; }
+  92%, 100% { bottom: 40%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dbfs-peak { animation: none; bottom: 60%; }
+}
+
+/* -------------------------------------------------------------------- */
+/* Placeholder-скриншоты                                                */
+/* -------------------------------------------------------------------- */
+.shot-frame {
+  position: relative;
+  background:
+    linear-gradient(135deg, rgb(var(--bg-alt)) 0%, rgb(var(--card)) 60%);
+  background-image:
+    repeating-linear-gradient(135deg, rgba(108,99,242,0.05) 0 2px, transparent 2px 14px);
+}
+.shot-frame img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+}
+.shot-frame img:not([src]),
+.shot-frame img.img-missing {
+  display: none;
+}
+
+/* -------------------------------------------------------------------- */
+/* Swiper — точечная настройка под палитру                              */
+/* -------------------------------------------------------------------- */
+.shots-swiper {
+  padding: 8px 8px 56px;
+  overflow: visible;
+}
+.shots-swiper .swiper-slide {
+  width: auto;
+  height: auto;
+  opacity: 0.45;
+  transform: scale(0.94);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+.shots-swiper .swiper-slide-active {
+  opacity: 1;
+  transform: scale(1);
+}
+.shots-swiper .swiper-pagination-bullet {
+  background: rgb(var(--ink-faint));
+  opacity: 0.5;
+  width: 7px;
+  height: 7px;
+}
+.shots-swiper .swiper-pagination-bullet-active {
+  background: rgb(var(--violet));
+  opacity: 1;
+  width: 20px;
+  border-radius: 4px;
+}
+.shots-swiper .swiper-button-next,
+.shots-swiper .swiper-button-prev {
+  width: 44px;
+  height: 44px;
+  background: rgb(var(--card));
+  border-radius: 999px;
+  box-shadow: 0 10px 30px -12px rgba(30, 34, 51, 0.25);
+  color: rgb(var(--ink));
+}
+.shots-swiper .swiper-button-next::after,
+.shots-swiper .swiper-button-prev::after {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+/* -------------------------------------------------------------------- */
+/* Доступность                                                          */
+/* -------------------------------------------------------------------- */
+:focus-visible {
+  outline: 2.5px solid rgb(var(--violet));
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Плавный якорь с учётом фиксированной шапки */
+section[id] {
+  scroll-margin-top: 84px;
+}

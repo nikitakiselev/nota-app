@@ -1,0 +1,664 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Nota — голосовой ввод для macOS</title>
+<meta name="description" content="Nota — менюбар-приложение для macOS: удержите правый ⌘, скажите — текст появится в активном окне. Распознавание целиком на вашем Mac, термины вроде gcloud и Terraform не искажаются." />
+
+<link rel="icon" sizes="32x32" href="assets/icons/favicon-32.png">
+<link rel="icon" sizes="16x16" href="assets/icons/favicon-16.png">
+<link rel="apple-touch-icon" href="assets/icons/nota-64.png">
+<meta property="og:title" content="Nota — голосовой ввод для macOS" />
+<meta property="og:description" content="Локальное распознавание речи для macOS: удержите правый ⌘, скажите — текст появится в активном окне. Ни один звук не покидает ваш Mac." />
+<meta property="og:image" content="assets/icons/nota-1024.png" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,420;0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          // rgb(var(--x) / <alpha-value>) — паттерн Tailwind для CSS-переменных:
+          // переменные в style.css хранят "R G B" каналы, поэтому модификаторы
+          // прозрачности вроде bg-coral/70 или border-line/60 считаются правильно.
+          bg: "rgb(var(--bg) / <alpha-value>)",
+          "bg-alt": "rgb(var(--bg-alt) / <alpha-value>)",
+          card: "rgb(var(--card) / <alpha-value>)",
+          ink: "rgb(var(--ink) / <alpha-value>)",
+          "ink-soft": "rgb(var(--ink-soft) / <alpha-value>)",
+          "ink-faint": "rgb(var(--ink-faint) / <alpha-value>)",
+          line: "rgb(var(--line) / <alpha-value>)",
+          violet: "rgb(var(--violet) / <alpha-value>)",
+          "violet-soft": "rgb(var(--violet-soft) / <alpha-value>)",
+          mint: "rgb(var(--mint) / <alpha-value>)",
+          "mint-soft": "rgb(var(--mint-soft) / <alpha-value>)",
+          coral: "rgb(var(--coral) / <alpha-value>)",
+          "coral-soft": "rgb(var(--coral-soft) / <alpha-value>)",
+          amber: "rgb(var(--amber) / <alpha-value>)",
+          "amber-soft": "rgb(var(--amber-soft) / <alpha-value>)"
+        },
+        fontFamily: {
+          display: ['"Fraunces"', "ui-serif", "Georgia", "serif"],
+          sans: ['"Inter"', "ui-sans-serif", "system-ui", "sans-serif"],
+          mono: ['"JetBrains Mono"', "ui-monospace", "SFMono-Regular", "monospace"]
+        },
+        boxShadow: {
+          soft: "0 24px 60px -24px rgba(30,34,51,0.18)",
+          card: "0 12px 32px -16px rgba(30,34,51,0.14)",
+          lift: "0 30px 70px -20px rgba(108,99,242,0.35)"
+        },
+        borderRadius: { "4xl": "1.75rem", "5xl": "2.25rem" }
+      }
+    }
+  };
+</script>
+
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="bg-bg text-ink font-sans antialiased selection:bg-violet selection:text-white">
+
+<div id="scroll-meter" aria-hidden="true"></div>
+
+<!-- ==================================================================== -->
+<!-- NAV                                                                   -->
+<!-- ==================================================================== -->
+<header class="fixed top-0 inset-x-0 z-50 border-b border-line/70 bg-bg/80 backdrop-blur-md">
+  <div class="mx-auto max-w-[1180px] px-5 sm:px-8 h-16 flex items-center justify-between">
+    <a href="#top" class="flex items-center gap-2.5 font-display text-lg font-medium tracking-tight">
+      <img src="assets/icons/nota-256.png" alt="Nota" width="32" height="32" class="w-8 h-8 rounded-xl" />
+      Nota
+    </a>
+
+    <nav id="nav-menu" class="hidden lg:flex items-center gap-7 text-[15px] text-ink-soft">
+      <a href="#privacy" class="hover:text-ink transition-colors">Приватность</a>
+      <a href="#layers" class="hover:text-ink transition-colors">Коррекция</a>
+      <a href="#screenshots" class="hover:text-ink transition-colors">Интерфейс</a>
+      <a href="#meter" class="hover:text-ink transition-colors">Индикатор</a>
+      <a href="#stats" class="hover:text-ink transition-colors">Статистика</a>
+    </nav>
+
+    <div class="flex items-center gap-3">
+      <a href="https://github.com/nikitakiselev/nota-app/releases/latest"
+         class="hidden sm:inline-flex items-center gap-2 rounded-full bg-ink text-bg px-4 py-2 text-sm font-medium hover:opacity-90 transition-opacity">
+        Скачать
+      </a>
+      <button id="nav-toggle" aria-expanded="false" aria-controls="nav-menu-mobile"
+              class="lg:hidden grid place-items-center w-10 h-10 rounded-full hover:bg-bg-alt transition-colors">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+    </div>
+  </div>
+  <!-- мобильное меню -->
+  <div id="nav-menu-mobile" class="hidden lg:hidden flex-col gap-1 border-t border-line/70 bg-bg px-5 py-3">
+    <a href="#privacy" class="rounded-xl px-3 py-2.5 text-ink-soft hover:bg-bg-alt hover:text-ink transition-colors">Приватность</a>
+    <a href="#layers" class="rounded-xl px-3 py-2.5 text-ink-soft hover:bg-bg-alt hover:text-ink transition-colors">Коррекция</a>
+    <a href="#screenshots" class="rounded-xl px-3 py-2.5 text-ink-soft hover:bg-bg-alt hover:text-ink transition-colors">Интерфейс</a>
+    <a href="#meter" class="rounded-xl px-3 py-2.5 text-ink-soft hover:bg-bg-alt hover:text-ink transition-colors">Индикатор</a>
+    <a href="#stats" class="rounded-xl px-3 py-2.5 text-ink-soft hover:bg-bg-alt hover:text-ink transition-colors">Статистика</a>
+    <a href="https://github.com/nikitakiselev/nota-app/releases/latest" class="mt-1 rounded-xl px-3 py-2.5 font-medium text-ink">Скачать</a>
+    <a href="https://pay.cloudtips.ru/p/e2a1bf31" class="rounded-xl px-3 py-2.5 text-ink-soft hover:bg-bg-alt transition-colors">Поддержать разработчика</a>
+  </div>
+</header>
+
+<main id="top">
+
+<!-- ==================================================================== -->
+<!-- HERO                                                                  -->
+<!-- ==================================================================== -->
+<section class="relative overflow-hidden pt-32 pb-20 sm:pt-40 sm:pb-28">
+  <div class="pointer-events-none absolute -top-24 -right-32 w-[520px] h-[520px] rounded-full bg-violet-soft blur-3xl opacity-70 motion-safe:animate-[pulse_9s_ease-in-out_infinite]"></div>
+  <div class="pointer-events-none absolute top-40 -left-40 w-[420px] h-[420px] rounded-full bg-mint-soft blur-3xl opacity-70 motion-safe:animate-[pulse_11s_ease-in-out_infinite]"></div>
+
+  <div class="relative mx-auto max-w-[1180px] px-5 sm:px-8 grid lg:grid-cols-[1.05fr_0.95fr] gap-16 items-center">
+    <div>
+      <span class="inline-flex items-center gap-2 rounded-full bg-card border border-line px-3.5 py-1.5 text-xs font-mono tracking-wide text-ink-soft shadow-card">
+        <span class="w-1.5 h-1.5 rounded-full bg-mint"></span>
+        MENU BAR · APPLE SILICON · БЕЗ ОБЛАКА
+      </span>
+
+      <h1 class="mt-6 font-display font-medium text-[clamp(2.5rem,5.6vw,4.25rem)] leading-[1.04] tracking-[-0.01em]">
+        Зажмите правый&nbsp;⌘ —
+        <span class="italic text-violet">и то, что вы сказали</span>,
+        уже в тексте.
+      </h1>
+
+      <p class="mt-6 text-[clamp(1.05rem,1.6vw,1.25rem)] leading-relaxed text-ink-soft max-w-[46ch]">
+        Локальное распознавание речи для macOS. Whisper.cpp понимает русскую речь
+        вперемешку с техническими терминами и не путает <span class="font-mono text-ink">terraform</span>
+        с «реформой». Ни один звук не покидает ваш Mac.
+      </p>
+
+      <div class="mt-9 flex flex-wrap items-center gap-4">
+        <a href="https://github.com/nikitakiselev/nota-app/releases/latest"
+           class="inline-flex items-center gap-2 rounded-full bg-ink text-bg px-6 py-3.5 font-medium hover:opacity-90 transition-opacity">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v12"/><path d="m7 11 5 5 5-5"/><path d="M5 20h14"/></svg>
+          Скачать бесплатно
+        </a>
+        <a href="https://pay.cloudtips.ru/p/e2a1bf31" target="_blank" rel="noopener"
+           class="inline-flex items-center gap-2 rounded-full border border-line bg-bg-alt/70 text-ink-soft px-5 py-3.5 font-medium hover:text-ink transition-colors">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4Z"/><path d="M6 2v3M10 2v3M14 2v3"/></svg>
+          Купить кофе разработчику
+        </a>
+        <a href="#layers" class="inline-flex items-center gap-1.5 px-2 py-3.5 font-medium text-ink-soft hover:text-ink transition-colors">
+          Как работает коррекция терминов
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+        </a>
+      </div>
+      <p class="mt-3 font-mono text-xs text-ink-faint">macOS 15 или новее · Apple Silicon</p>
+      <p class="mt-2 text-sm text-ink-soft">
+        Напишите, если хотите узнать о выходе —
+        <a href="mailto:kiselev2008@gmail.com" class="underline decoration-line hover:text-ink hover:decoration-ink transition-colors">kiselev2008@gmail.com</a>
+      </p>
+
+      <dl class="mt-11 flex flex-wrap gap-x-9 gap-y-4 font-mono text-sm">
+        <div>
+          <dt class="text-ink-faint">задержка (прогрето)</dt>
+          <dd class="text-ink font-medium mt-0.5">~1.5&nbsp;с</dd>
+        </div>
+        <div>
+          <dt class="text-ink-faint">модель</dt>
+          <dd class="text-ink font-medium mt-0.5">large-v3, q5_0</dd>
+        </div>
+        <div>
+          <dt class="text-ink-faint">сеть во время работы</dt>
+          <dd class="text-ink font-medium mt-0.5">0&nbsp;байт</dd>
+        </div>
+      </dl>
+    </div>
+
+    <!-- Мокап: панель уровня + коррекция терминов «на лету» -->
+    <div class="reveal relative">
+      <div class="relative rounded-5xl bg-gradient-to-br from-bg-alt to-card p-4 sm:p-5 shadow-soft border border-line/60">
+        <div class="relative rounded-4xl bg-[#e9ecf9] overflow-hidden aspect-[6/5]">
+          <!-- ряд «менюбара» -->
+          <div class="absolute top-0 inset-x-0 h-9 bg-white/70 backdrop-blur flex items-center justify-between px-4 border-b border-line/60">
+            <div class="flex items-center gap-1.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-coral/70"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-amber/70"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-mint/70"></span>
+            </div>
+            <span class="font-mono text-[11px] text-ink-faint">Claude Code — терминал</span>
+            <span class="w-4 h-4 rounded bg-violet/15"></span>
+          </div>
+
+          <!-- плавающая панель уровня записи -->
+          <div class="absolute top-14 right-4 flex items-center gap-2 rounded-full bg-white/95 shadow-card px-3 py-2 h-10 w-[132px] border border-line/50">
+            <span class="relative flex w-2 h-2">
+              <span class="absolute inline-flex h-full w-full rounded-full bg-coral opacity-75 motion-safe:animate-ping"></span>
+              <span class="relative inline-flex rounded-full h-2 w-2 bg-coral"></span>
+            </span>
+            <span class="meter-bars h-5 flex-1">
+              <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+            </span>
+          </div>
+
+          <!-- «текстовое поле» с печатающейся коррекцией -->
+          <div class="absolute left-4 right-4 bottom-4 rounded-2xl bg-ink/95 text-white/90 px-4 py-3.5 font-mono text-[13px] sm:text-sm shadow-lg min-h-[3.2rem] flex items-center">
+            <span class="text-mint mr-2">$</span>
+            <span id="typewriter" class="whitespace-pre"></span>
+          </div>
+
+          <div class="absolute left-4 top-14 font-mono text-[11px] text-ink-soft bg-white/80 rounded-full px-2.5 py-1">
+            правый ⌘ удержан
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================================================================== -->
+<!-- ORIGIN OF THE NAME                                                    -->
+<!-- ==================================================================== -->
+<section class="reveal py-20 sm:py-28 border-y border-line/70">
+  <div class="mx-auto max-w-[720px] px-6 text-center">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="mx-auto text-violet/60" aria-hidden="true">
+      <ellipse cx="8" cy="18" rx="3.2" ry="2.6" fill="currentColor"/>
+      <rect x="10.8" y="4" width="1.8" height="14" fill="currentColor"/>
+      <path d="M12.6 4c3.4 0.4 5.4 2.6 5.2 6.4-1.7-2.3-3.4-3.2-5.2-3.4z" fill="currentColor"/>
+    </svg>
+    <p class="mt-7 font-display italic text-[clamp(1.35rem,2.6vw,1.9rem)] leading-[1.45] text-ink">
+      Нота — придуманный людьми способ записать звук значками.
+      Nota делает ровно это, только значки — буквы.
+    </p>
+    <p class="mt-6 text-ink-soft leading-relaxed max-w-[52ch] mx-auto">
+      Нотная запись появилась, чтобы музыкальный звук не исчезал бесследно.
+      Nota ловит сказанное вслух и превращает в текст, который остаётся.
+    </p>
+  </div>
+</section>
+
+<!-- ==================================================================== -->
+<!-- PRIVACY                                                               -->
+<!-- ==================================================================== -->
+<section id="privacy" class="relative py-24 sm:py-32 bg-bg-alt">
+  <div class="mx-auto max-w-[1180px] px-5 sm:px-8">
+    <div class="reveal max-w-[62ch]">
+      <span class="font-mono text-xs tracking-wide text-mint">/ ПРИВАТНОСТЬ</span>
+      <h2 class="mt-4 font-display font-medium text-[clamp(1.9rem,3.4vw,2.75rem)] leading-[1.1] tracking-[-0.01em]">
+        Речь распознаётся на этом Mac. Точка.
+      </h2>
+      <p class="mt-5 text-lg text-ink-soft leading-relaxed">
+        Сеть используется один раз — чтобы скачать веса модели при установке.
+        После этого Nota может работать в самолёте: whisper.cpp и Metal
+        делают всё распознавание локально, без серверов и без API-ключей.
+      </p>
+    </div>
+
+    <div class="reveal-stagger mt-14 grid md:grid-cols-3 gap-5">
+      <div class="rounded-4xl bg-card border border-line/70 p-7 shadow-card">
+        <div class="w-11 h-11 rounded-2xl bg-mint-soft grid place-items-center">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgb(var(--mint))" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+        </div>
+        <h3 class="mt-5 font-display text-xl font-medium">Распознавание — офлайн</h3>
+        <p class="mt-2.5 text-ink-soft leading-relaxed">
+          Модель ggml large-v3 (q5_0, ~1&nbsp;ГБ) загружается в память и работает
+          через Metal на Apple Silicon. Запись целиком остаётся в процессе приложения.
+        </p>
+      </div>
+
+      <div class="rounded-4xl bg-card border border-line/70 p-7 shadow-card">
+        <div class="w-11 h-11 rounded-2xl bg-violet-soft grid place-items-center">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgb(var(--violet))" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18M3 12h18"/></svg>
+        </div>
+        <h3 class="mt-5 font-display text-xl font-medium">Сеть — только один раз</h3>
+        <p class="mt-2.5 text-ink-soft leading-relaxed">
+          Единственный сетевой обмен за всё время использования — разовая загрузка
+          весов модели при установке. Дальше приложению сеть не нужна.
+        </p>
+      </div>
+
+      <div class="rounded-4xl bg-card border border-line/70 p-7 shadow-card">
+        <div class="w-11 h-11 rounded-2xl bg-amber-soft grid place-items-center">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgb(var(--amber))" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg>
+        </div>
+        <h3 class="mt-5 font-display text-xl font-medium">Одно исключение — явное</h3>
+        <p class="mt-2.5 text-ink-soft leading-relaxed">
+          Постобработка через внешний API — единственный случай, когда текст может
+          уйти наружу. Она выключена по умолчанию и предупреждает, куда именно
+          отправляется текст, перед тем как вы её включите.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================================================================== -->
+<!-- CORRECTION LAYERS                                                     -->
+<!-- ==================================================================== -->
+<section id="layers" class="py-24 sm:py-32">
+  <div class="mx-auto max-w-[1180px] px-5 sm:px-8">
+    <div class="reveal max-w-[62ch]">
+      <span class="font-mono text-xs tracking-wide text-violet">/ КОРРЕКЦИЯ ТЕРМИНОВ</span>
+      <h2 class="mt-4 font-display font-medium text-[clamp(1.9rem,3.4vw,2.75rem)] leading-[1.1] tracking-[-0.01em]">
+        Термин проходит четыре фильтра, прежде чем стать текстом
+      </h2>
+      <p class="mt-5 text-lg text-ink-soft leading-relaxed">
+        Каждый слой решает свою задачу и не заменяет остальные — от подсказки,
+        которая формирует само распознавание, до необязательной правки стиля в конце.
+      </p>
+    </div>
+
+    <div class="reveal-stagger mt-16 grid lg:grid-cols-4 gap-5 lg:gap-4 relative">
+      <!-- соединительная линия для десктопа -->
+      <div class="hidden lg:block absolute top-[52px] left-[12.5%] right-[12.5%] h-px bg-line" aria-hidden="true"></div>
+
+      <div class="relative rounded-4xl bg-card border border-line/70 p-6 shadow-card">
+        <span class="font-mono text-xs text-ink-faint">ШАГ 1 · до распознавания</span>
+        <div class="mt-3 w-10 h-10 rounded-full bg-violet text-white grid place-items-center font-mono text-sm font-medium relative z-10">01</div>
+        <h3 class="mt-4 font-display text-lg font-medium">Подсказка декодеру</h3>
+        <p class="mt-2 text-sm text-ink-soft leading-relaxed">
+          Список терминов уходит в whisper ещё до начала записи и заранее
+          сдвигает вероятности словаря в его пользу.
+        </p>
+        <div class="mt-4 rounded-xl bg-bg-alt px-3 py-2.5 font-mono text-xs leading-relaxed">
+          <span class="text-coral line-through decoration-1">реформ</span>
+          <span class="text-ink-faint mx-1">→</span>
+          <span class="text-mint">terraform</span>
+        </div>
+      </div>
+
+      <div class="relative rounded-4xl bg-card border border-line/70 p-6 shadow-card">
+        <span class="font-mono text-xs text-ink-faint">ШАГ 2 · dictionary.yaml</span>
+        <div class="mt-3 w-10 h-10 rounded-full bg-violet text-white grid place-items-center font-mono text-sm font-medium relative z-10">02</div>
+        <h3 class="mt-4 font-display text-lg font-medium">Точные замены</h3>
+        <p class="mt-2 text-sm text-ink-soft leading-relaxed">
+          Регулярные выражения для устойчивых, всегда одинаковых искажений
+          после распознавания.
+        </p>
+        <div class="mt-4 rounded-xl bg-bg-alt px-3 py-2.5 font-mono text-xs leading-relaxed">
+          <span class="text-coral line-through decoration-1">пост грез</span>
+          <span class="text-ink-faint mx-1">→</span>
+          <span class="text-mint">PostgreSQL</span>
+        </div>
+      </div>
+
+      <div class="relative rounded-4xl bg-card border border-line/70 p-6 shadow-card">
+        <span class="font-mono text-xs text-ink-faint">ШАГ 3 · glossary.yaml</span>
+        <div class="mt-3 w-10 h-10 rounded-full bg-violet text-white grid place-items-center font-mono text-sm font-medium relative z-10">03</div>
+        <h3 class="mt-4 font-display text-lg font-medium">Фонетический словарь</h3>
+        <p class="mt-2 text-sm text-ink-soft leading-relaxed">
+          Сравнивает слово по звучанию, а не по буквам — ловит любые варианты
+          произношения однословных терминов.
+        </p>
+        <div class="mt-4 rounded-xl bg-bg-alt px-3 py-2.5 font-mono text-xs leading-relaxed">
+          <span class="text-coral line-through decoration-1">кубернетес</span>
+          <span class="text-ink-faint mx-1">→</span>
+          <span class="text-mint">Kubernetes</span>
+        </div>
+      </div>
+
+      <div class="relative rounded-4xl bg-card border border-line/70 p-6 shadow-card">
+        <span class="font-mono text-xs text-ink-faint">ШАГ 4 · опционально</span>
+        <div class="mt-3 w-10 h-10 rounded-full bg-card text-violet border-2 border-violet grid place-items-center font-mono text-sm font-medium relative z-10">04</div>
+        <h3 class="mt-4 font-display text-lg font-medium">Постобработка</h3>
+        <p class="mt-2 text-sm text-ink-soft leading-relaxed">
+          Любая OpenAI-совместимая модель — облачная или локальная (Ollama,
+          LM Studio) — причёсывает стиль и пунктуацию. Выключена по умолчанию.
+        </p>
+        <div class="mt-4 rounded-xl bg-amber-soft px-3 py-2.5 font-mono text-[11px] leading-relaxed text-ink-soft">
+          единственный шаг, где текст может покинуть Mac — и только если вы сами это включили
+        </div>
+      </div>
+    </div>
+
+    <p class="reveal mt-10 text-ink-soft max-w-[70ch]">
+      Все четыре слоя настраиваются во вкладках «Термины», «Замены», «Фонетика»
+      и «Постобработка» окна настроек — без единой правки YAML руками. Каждое
+      правило можно тут же проверить на живом тексте.
+    </p>
+  </div>
+</section>
+
+<!-- ==================================================================== -->
+<!-- SCREENSHOTS                                                           -->
+<!-- ==================================================================== -->
+<section id="screenshots" class="py-24 sm:py-32 bg-bg-alt overflow-hidden">
+  <div class="mx-auto max-w-[1180px] px-5 sm:px-8">
+    <div class="reveal max-w-[62ch]">
+      <span class="font-mono text-xs tracking-wide text-violet">/ ИНТЕРФЕЙС</span>
+      <h2 class="mt-4 font-display font-medium text-[clamp(1.9rem,3.4vw,2.75rem)] leading-[1.1] tracking-[-0.01em]">
+        Настройки — это интерфейс, не YAML-файл
+      </h2>
+      <p class="mt-5 text-lg text-ink-soft leading-relaxed">
+        Семь вкладок: Основные, Термины, Замены, Фонетика, Постобработка, Расход, Модель.
+        Каждое правило проверяется на живом тексте прямо в окне.
+      </p>
+    </div>
+  </div>
+
+  <div class="reveal mt-14">
+    <div class="swiper shots-swiper mx-auto max-w-[1400px]">
+      <div class="swiper-wrapper items-end">
+
+        <div class="swiper-slide">
+          <figure class="flex flex-col items-center gap-3.5">
+            <img src="assets/screenshots/settings-general@2x.png" alt="Настройки Nota, вкладка «Основные»: клавиша диктовки, язык распознавания, панель, автозапуск" class="h-[clamp(230px,30vw,440px)] w-auto max-w-[78vw] rounded-2xl shadow-card" />
+            <figcaption class="font-mono text-xs text-ink-soft text-center max-w-[32ch] leading-relaxed">Основные — клавиша диктовки, язык, панель, автозапуск</figcaption>
+          </figure>
+        </div>
+
+        <div class="swiper-slide">
+          <figure class="flex flex-col items-center gap-3.5">
+            <img src="assets/screenshots/settings-terms@2x.png" alt="Настройки Nota, вкладка «Термины»: список слов, которые модель должна знать" class="h-[clamp(230px,30vw,440px)] w-auto max-w-[78vw] rounded-2xl shadow-card" />
+            <figcaption class="font-mono text-xs text-ink-soft text-center max-w-[32ch] leading-relaxed">Термины — слова, которые модель должна знать</figcaption>
+          </figure>
+        </div>
+
+        <div class="swiper-slide">
+          <figure class="flex flex-col items-center gap-3.5">
+            <img src="assets/screenshots/settings-replacements@2x.png" alt="Настройки Nota, вкладка «Замены»: точные правила после распознавания с проверкой вживую" class="h-[clamp(230px,30vw,440px)] w-auto max-w-[78vw] rounded-2xl shadow-card" />
+            <figcaption class="font-mono text-xs text-ink-soft text-center max-w-[32ch] leading-relaxed">Замены — точные правила после распознавания, с проверкой вживую</figcaption>
+          </figure>
+        </div>
+
+        <div class="swiper-slide">
+          <figure class="flex flex-col items-center gap-3.5">
+            <img src="assets/screenshots/settings-phonetics@2x.png" alt="Настройки Nota, вкладка «Фонетика»: сопоставление терминов по звучанию" class="h-[clamp(230px,30vw,440px)] w-auto max-w-[78vw] rounded-2xl shadow-card" />
+            <figcaption class="font-mono text-xs text-ink-soft text-center max-w-[32ch] leading-relaxed">Фонетика — сопоставление терминов по звучанию</figcaption>
+          </figure>
+        </div>
+
+        <div class="swiper-slide">
+          <figure class="flex flex-col items-center gap-3.5">
+            <img src="assets/screenshots/settings-postprocess@2x.png" alt="Настройки Nota, вкладка «Постобработка»: исправление текста внешней моделью, выключено по умолчанию" class="h-[clamp(230px,30vw,440px)] w-auto max-w-[78vw] rounded-2xl shadow-card" />
+            <figcaption class="font-mono text-xs text-ink-soft text-center max-w-[32ch] leading-relaxed">Постобработка — правка внешней моделью, выключена по умолчанию</figcaption>
+          </figure>
+        </div>
+
+        <div class="swiper-slide">
+          <figure class="flex flex-col items-center gap-3.5">
+            <img src="assets/screenshots/settings-usage@2x.png" alt="Настройки Nota, вкладка «Расход»: статистика диктовок, темп речи, токены и рубли" class="h-[clamp(230px,30vw,440px)] w-auto max-w-[78vw] rounded-2xl shadow-card" />
+            <figcaption class="font-mono text-xs text-ink-soft text-center max-w-[32ch] leading-relaxed">Расход — статистика диктовок, темп речи, токены и рубли</figcaption>
+          </figure>
+        </div>
+
+        <div class="swiper-slide">
+          <figure class="flex flex-col items-center gap-3.5">
+            <img src="assets/screenshots/settings-model@2x.png" alt="Настройки Nota, вкладка «Модель»: расположение и состояние файла весов" class="h-[clamp(230px,30vw,440px)] w-auto max-w-[78vw] rounded-2xl shadow-card" />
+            <figcaption class="font-mono text-xs text-ink-soft text-center max-w-[32ch] leading-relaxed">Модель — расположение и состояние весов</figcaption>
+          </figure>
+        </div>
+
+        <div class="swiper-slide">
+          <figure class="shot-frame rounded-4xl border border-line/70 shadow-card aspect-[320/420] h-[280px] sm:h-[320px] flex items-end p-4">
+            <img data-real onerror="this.classList.add('img-missing')" src="assets/screenshots/menubar-dropdown.png" alt="Меню в менюбаре" />
+            <figcaption class="shot-placeholder font-mono text-xs text-ink-soft bg-card/90 backdrop-blur rounded-full px-3 py-1.5">320×420 · выпадающее меню значка в менюбаре</figcaption>
+          </figure>
+        </div>
+
+        <div class="swiper-slide">
+          <figure class="shot-frame rounded-4xl border border-line/70 shadow-card aspect-[560/160] h-[130px] sm:h-[150px] flex items-end p-4">
+            <img data-real onerror="this.classList.add('img-missing')" src="assets/screenshots/status-panel.png" alt="Плавающая панель уровня записи" />
+            <figcaption class="shot-placeholder font-mono text-xs text-ink-soft bg-card/90 backdrop-blur rounded-full px-3 py-1.5">560×160 · панель уровня записи поверх окна</figcaption>
+          </figure>
+        </div>
+
+      </div>
+      <div class="swiper-pagination"></div>
+      <div class="swiper-button-prev"></div>
+      <div class="swiper-button-next"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================================================================== -->
+<!-- METER                                                                 -->
+<!-- ==================================================================== -->
+<section id="meter" class="py-24 sm:py-32">
+  <div class="mx-auto max-w-[1180px] px-5 sm:px-8 grid lg:grid-cols-[0.95fr_1.05fr] gap-16 items-center">
+    <div class="reveal order-2 lg:order-1">
+      <span class="font-mono text-xs tracking-wide text-coral">/ ИНДИКАТОР УРОВНЯ</span>
+      <h2 class="mt-4 font-display font-medium text-[clamp(1.9rem,3.4vw,2.75rem)] leading-[1.1] tracking-[-0.01em]">
+        Видно, что микрофон слышит, — ещё до конца фразы
+      </h2>
+      <p class="mt-5 text-lg text-ink-soft leading-relaxed">
+        Панель работает как в OBS: зелёная, жёлтая и красная зоны по шкале
+        дБФС, маркер держит пик, а подсказка прямо говорит «тихо, говорите громче».
+      </p>
+
+      <div class="mt-8 rounded-3xl bg-coral-soft border border-coral/20 p-6">
+        <p class="font-mono text-xs text-coral tracking-wide">ЗАМЕР, А НЕ НА ГЛАЗ</p>
+        <p class="mt-2.5 text-ink leading-relaxed">
+          Когда пик диктовки падает ниже <span class="font-mono font-medium">−26&nbsp;дБФС</span>,
+          whisper начинает терять термины. Красная зона на шкале начинается ровно там.
+        </p>
+      </div>
+
+      <ul class="mt-8 space-y-3.5 text-ink-soft">
+        <li class="flex items-start gap-3">
+          <span class="mt-1.5 w-2 h-2 rounded-full bg-mint shrink-0"></span>
+          <span><span class="text-ink font-medium">Зелёная зона</span> — уровень, при котором термины распознаются надёжно.</span>
+        </li>
+        <li class="flex items-start gap-3">
+          <span class="mt-1.5 w-2 h-2 rounded-full bg-amber shrink-0"></span>
+          <span><span class="text-ink font-medium">Жёлтая зона</span> — близко к перегрузу, стоит говорить чуть тише.</span>
+        </li>
+        <li class="flex items-start gap-3">
+          <span class="mt-1.5 w-2 h-2 rounded-full bg-coral shrink-0"></span>
+          <span><span class="text-ink font-medium">Красная зона</span> — слишком тихо, часть терминов не распознается.</span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="reveal order-1 lg:order-2 relative">
+      <div class="rounded-5xl bg-card border border-line/70 shadow-soft p-8 sm:p-10">
+        <div class="flex items-end gap-6">
+          <!-- шкала дБФС -->
+          <div class="flex flex-col items-center gap-2 shrink-0">
+            <span class="font-mono text-[11px] text-ink-faint">0</span>
+            <div class="relative w-9 h-64 rounded-full dbfs-scale overflow-hidden shadow-inner">
+              <div class="dbfs-peak absolute left-0 right-0 h-[3px] bg-ink/80" style="bottom:60%"></div>
+            </div>
+            <span class="font-mono text-[11px] text-ink-faint">−40</span>
+          </div>
+
+          <div class="flex-1">
+            <p class="font-mono text-xs text-ink-faint">УРОВЕНЬ ЗАПИСИ</p>
+            <p class="mt-2 font-display text-2xl">−18&nbsp;дБФС</p>
+            <p class="mt-1 text-sm text-ink-soft">пик держится в зелёной зоне</p>
+
+            <div class="mt-6 space-y-3 font-mono text-xs">
+              <div class="flex items-center justify-between rounded-xl bg-amber-soft px-3.5 py-2.5">
+                <span class="text-ink-soft">громко</span>
+                <span class="text-ink-faint">−6…0</span>
+              </div>
+              <div class="flex items-center justify-between rounded-xl bg-mint-soft px-3.5 py-2.5">
+                <span class="text-ink-soft">то, что нужно</span>
+                <span class="text-ink-faint">−26…−6</span>
+              </div>
+              <div class="flex items-center justify-between rounded-xl bg-coral-soft px-3.5 py-2.5">
+                <span class="text-ink-soft">тихо, говорите громче</span>
+                <span class="text-ink-faint">−40…−26</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================================================================== -->
+<!-- STATS                                                                 -->
+<!-- ==================================================================== -->
+<section id="stats" class="py-24 sm:py-32 bg-bg-alt">
+  <div class="mx-auto max-w-[1180px] px-5 sm:px-8">
+    <div class="reveal max-w-[62ch]">
+      <span class="font-mono text-xs tracking-wide text-mint">/ СТАТИСТИКА</span>
+      <h2 class="mt-4 font-display font-medium text-[clamp(1.9rem,3.4vw,2.75rem)] leading-[1.1] tracking-[-0.01em]">
+        Сколько сказано и сколько времени это сэкономило
+      </h2>
+      <p class="mt-5 text-lg text-ink-soft leading-relaxed">
+        Слова, темп речи, экономия против набора руками, серия дней подряд
+        и расход на постобработку — во вкладке «Расход», графики на Swift Charts.
+      </p>
+    </div>
+
+    <div class="mt-14 grid lg:grid-cols-[1.1fr_0.9fr] gap-6">
+      <!-- «график» -->
+      <div class="reveal rounded-4xl bg-card border border-line/70 shadow-card p-7 sm:p-9">
+        <div class="flex items-baseline justify-between">
+          <p class="font-mono text-xs text-ink-faint">СЛОВ В ДЕНЬ, ПОСЛЕДНИЕ 14</p>
+          <p class="font-mono text-xs text-ink-faint">иллюстрация</p>
+        </div>
+        <div class="mt-8 flex items-end gap-2 sm:gap-3 h-40">
+          <div class="flex-1 rounded-t-lg bg-violet-soft" style="height:38%"></div>
+          <div class="flex-1 rounded-t-lg bg-violet-soft" style="height:52%"></div>
+          <div class="flex-1 rounded-t-lg bg-violet/40" style="height:44%"></div>
+          <div class="flex-1 rounded-t-lg bg-violet-soft" style="height:70%"></div>
+          <div class="flex-1 rounded-t-lg bg-violet-soft" style="height:58%"></div>
+          <div class="flex-1 rounded-t-lg bg-violet/40" style="height:66%"></div>
+          <div class="flex-1 rounded-t-lg bg-violet" style="height:92%"></div>
+          <div class="flex-1 rounded-t-lg bg-violet-soft" style="height:48%"></div>
+          <div class="flex-1 rounded-t-lg bg-violet-soft" style="height:60%"></div>
+          <div class="flex-1 rounded-t-lg bg-violet/40" style="height:40%"></div>
+          <div class="flex-1 rounded-t-lg bg-violet-soft" style="height:75%"></div>
+          <div class="flex-1 rounded-t-lg bg-violet-soft" style="height:64%"></div>
+          <div class="flex-1 rounded-t-lg bg-violet/40" style="height:50%"></div>
+          <div class="flex-1 rounded-t-lg bg-violet" style="height:82%"></div>
+        </div>
+        <p class="mt-6 text-sm text-ink-soft">
+          Реальный график — с вашими цифрами — во вкладке «Расход» окна настроек.
+        </p>
+      </div>
+
+      <!-- карточки метрик -->
+      <div class="reveal-stagger grid grid-cols-2 gap-4">
+        <div class="rounded-3xl bg-card border border-line/70 shadow-card p-5">
+          <p class="font-mono text-xs text-ink-faint">темп речи</p>
+          <p class="mt-2 font-display text-2xl">128 <span class="text-base text-ink-soft font-sans">слов/мин</span></p>
+        </div>
+        <div class="rounded-3xl bg-card border border-line/70 shadow-card p-5">
+          <p class="font-mono text-xs text-ink-faint">серия дней</p>
+          <p class="mt-2 font-display text-2xl">12 <span class="text-base text-ink-soft font-sans">подряд</span></p>
+        </div>
+        <div class="rounded-3xl bg-card border border-line/70 shadow-card p-5">
+          <p class="font-mono text-xs text-ink-faint">сэкономлено</p>
+          <p class="mt-2 font-display text-2xl">3.4 <span class="text-base text-ink-soft font-sans">ч/нед</span></p>
+        </div>
+        <div class="rounded-3xl bg-card border border-line/70 shadow-card p-5">
+          <p class="font-mono text-xs text-ink-faint">постобработка</p>
+          <p class="mt-2 font-display text-2xl">0 <span class="text-base text-ink-soft font-sans">₽ (выкл.)</span></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ==================================================================== -->
+<!-- FOOTER                                                                -->
+<!-- ==================================================================== -->
+<footer class="border-t border-line/70">
+  <div class="mx-auto max-w-[1180px] px-5 sm:px-8 py-16 grid md:grid-cols-[1.1fr_0.9fr] gap-12">
+    <div class="reveal">
+      <a href="#top" class="flex items-center gap-2.5 font-display text-lg font-medium tracking-tight">
+        <img src="assets/icons/nota-256.png" alt="Nota" width="32" height="32" class="w-8 h-8 rounded-xl" />
+        Nota
+      </a>
+      <p class="mt-4 text-ink-soft max-w-[42ch] leading-relaxed">
+        Собрано на whisper.cpp. Работает без сети, кроме одной загрузки весов модели при установке.
+      </p>
+      <p class="mt-6 text-sm text-ink-faint">
+        Никита Киселев ·
+        <a href="mailto:kiselev2008@gmail.com" class="underline decoration-line hover:text-ink hover:decoration-ink transition-colors">kiselev2008@gmail.com</a>
+      </p>
+    </div>
+
+    <div class="reveal">
+      <p class="font-mono text-xs tracking-wide text-ink-faint">СИСТЕМНЫЕ ТРЕБОВАНИЯ</p>
+      <ul class="mt-4 space-y-2.5 text-ink-soft">
+        <li class="flex items-center gap-2.5"><span class="w-1.5 h-1.5 rounded-full bg-violet"></span>macOS 15 или новее</li>
+        <li class="flex items-center gap-2.5"><span class="w-1.5 h-1.5 rounded-full bg-violet"></span>Apple Silicon (M-серия)</li>
+        <li class="flex items-center gap-2.5"><span class="w-1.5 h-1.5 rounded-full bg-violet"></span>~1 ГБ на диске под модель</li>
+        <li class="flex items-center gap-2.5"><span class="w-1.5 h-1.5 rounded-full bg-violet"></span>~1.5 ГБ ОЗУ, пока приложение запущено</li>
+      </ul>
+      <p class="mt-6 rounded-2xl border border-dashed border-line bg-bg-alt/70 px-4 py-3 text-sm text-ink-soft">
+        Приложение бесплатное. Если оно вам пригодилось —
+        <a href="https://pay.cloudtips.ru/p/e2a1bf31" target="_blank" rel="noopener"
+           class="underline underline-offset-2 hover:text-ink">купите разработчику кофе</a>.
+      </p>
+    </div>
+  </div>
+
+  <div class="border-t border-line/70">
+    <div class="mx-auto max-w-[1180px] px-5 sm:px-8 py-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-ink-faint">
+      <p>© <span id="year">2026</span> Nota. Личный проект, распространяется как есть.</p>
+      <p class="font-mono text-xs">whisper.cpp · Swift 6.2 · без сборщиков</p>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

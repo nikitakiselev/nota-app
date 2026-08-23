@@ -470,30 +470,37 @@
         Видно, что микрофон слышит, — ещё до конца фразы
       </h2>
       <p class="mt-5 text-lg text-ink-soft leading-relaxed">
-        Панель работает как в OBS: зелёная, жёлтая и красная зоны по шкале
-        дБФС, маркер держит пик, а подсказка прямо говорит «тихо, говорите громче».
+        Пока вы говорите, панель показывает уровень по шкале дБФС и держит
+        метку самого громкого звука. Догадываться, услышал ли микрофон, не
+        нужно: если громкости не хватает, приложение скажет об этом словами.
       </p>
 
       <div class="mt-8 rounded-3xl bg-coral-soft border border-coral/20 p-6">
         <p class="font-mono text-xs text-coral tracking-wide">ЗАМЕР, А НЕ НА ГЛАЗ</p>
         <p class="mt-2.5 text-ink leading-relaxed">
           Когда пик диктовки падает ниже <span class="font-mono font-medium">−26&nbsp;дБФС</span>,
-          whisper начинает терять термины. Красная зона на шкале начинается ровно там.
+          whisper начинает терять термины. Подсказка «тихо, говорите громче»
+          загорается ровно на этом пороге — он получен замером, а не выбран
+          на глаз.
         </p>
       </div>
 
       <ul class="mt-8 space-y-3.5 text-ink-soft">
         <li class="flex items-start gap-3">
           <span class="mt-1.5 w-2 h-2 rounded-full bg-mint shrink-0"></span>
-          <span><span class="text-ink font-medium">Зелёная зона</span> — уровень, при котором термины распознаются надёжно.</span>
+          <span><span class="text-ink font-medium">Зелёная часть шкалы</span> — обычная речь. Здесь полоса живёт почти всё время.</span>
         </li>
         <li class="flex items-start gap-3">
           <span class="mt-1.5 w-2 h-2 rounded-full bg-amber shrink-0"></span>
-          <span><span class="text-ink font-medium">Жёлтая зона</span> — близко к перегрузу, стоит говорить чуть тише.</span>
+          <span><span class="text-ink font-medium">Жёлтая</span> — громко, до перегруза остаётся немного.</span>
         </li>
         <li class="flex items-start gap-3">
           <span class="mt-1.5 w-2 h-2 rounded-full bg-coral shrink-0"></span>
-          <span><span class="text-ink font-medium">Красная зона</span> — слишком тихо, часть терминов не распознается.</span>
+          <span><span class="text-ink font-medium">Красная</span> — перегруз: звук обрезается, и распознавание портится. В норме туда не заходят.</span>
+        </li>
+        <li class="flex items-start gap-3">
+          <span class="mt-1.5 w-2 h-2 rounded-full bg-violet shrink-0"></span>
+          <span><span class="text-ink font-medium">Слишком тихо</span> — цветом не показывается: полоса просто короткая. Об этом приложение предупреждает текстом.</span>
         </li>
       </ul>
     </div>

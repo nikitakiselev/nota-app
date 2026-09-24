@@ -276,16 +276,56 @@ section[id] {
   z-index: 100;
   display: grid;
   place-items: center;
-  padding: 24px;
-  background: rgba(20, 22, 34, 0.72);
+  padding: 24px 72px;
+  background: rgba(20, 22, 34, 0.78);
   backdrop-filter: blur(6px);
   cursor: zoom-out;
 }
 .lightbox[hidden] { display: none; }
-.lightbox img {
-  max-width: min(100%, 1400px);
-  max-height: 100%;
+.lightbox-figure {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+}
+/* Размер от окна, а не от родителя: проценты от grid-ячейки не
+   разрешались, и высокий снимок («Основные») обрезался снизу. */
+.lightbox-figure img {
+  max-width: calc(100vw - 144px);
+  max-height: calc(100vh - 96px);
+  max-height: calc(100dvh - 96px);
   width: auto;
   height: auto;
   object-fit: contain;
+}
+.lightbox-caption {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.8);
+  text-align: center;
+}
+.lightbox-btn {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 999px;
+  border: 0;
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  font-size: 30px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.lightbox-btn:hover { background: rgba(255, 255, 255, 0.26); }
+.lightbox-prev { left: 14px; top: 50%; transform: translateY(-50%); }
+.lightbox-next { right: 14px; top: 50%; transform: translateY(-50%); }
+.lightbox-close { right: 14px; top: 14px; font-size: 26px; }
+@media (max-width: 640px) {
+  .lightbox { padding: 16px; }
+  .lightbox-figure img { max-width: calc(100vw - 32px); max-height: calc(100dvh - 140px); }
+  .lightbox-prev, .lightbox-next { top: auto; bottom: 16px; transform: none; }
 }

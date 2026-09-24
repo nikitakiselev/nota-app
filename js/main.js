@@ -163,23 +163,64 @@
   /* ---------------------------------------------------------------- */
   var lightbox = document.getElementById("lightbox");
   var lightboxImg = lightbox ? lightbox.querySelector("img") : null;
-  function openLightbox(img) {
-    if (!lightbox) return;
+  var lightboxCaption = lightbox ? lightbox.querySelector(".lightbox-caption") : null;
+  var shots = [];
+  var shotIndex = 0;
+  var shotsSwiper = null;
+
+  function showShot(index) {
+    shotIndex = (index + shots.length) % shots.length;
+    var img = shots[shotIndex];
+    var caption = img.closest("figure").querySelector("figcaption");
     lightboxImg.src = img.currentSrc || img.src;
     lightboxImg.alt = img.alt;
+    lightboxCaption.textContent = (caption ? caption.textContent + " · " : "")
+      + (shotIndex + 1) + " / " + shots.length;
+    // Карусель под лайтбоксом едет следом: закрыли — стоите на том же снимке.
+    if (shotsSwiper) shotsSwiper.slideTo(shotIndex);
+  }
+  function openLightbox(img) {
+    if (!lightbox) return;
+    shots = Array.prototype.slice.call(document.querySelectorAll(".shots-swiper .swiper-slide img"));
     lightbox.hidden = false;
     document.documentElement.style.overflow = "hidden";
+    // У карусели свои стрелки на клавиатуре: при открытом лайтбоксе она
+    // листалась бы вдвое и уезжала от показанного снимка.
+    if (shotsSwiper) shotsSwiper.keyboard.disable();
+    showShot(Math.max(0, shots.indexOf(img)));
   }
   function closeLightbox() {
     if (!lightbox || lightbox.hidden) return;
     lightbox.hidden = true;
     lightboxImg.removeAttribute("src");
     document.documentElement.style.overflow = "";
+    if (shotsSwiper) shotsSwiper.keyboard.enable();
   }
   if (lightbox) {
     lightbox.addEventListener("click", closeLightbox);
+    lightbox.querySelector(".lightbox-prev").addEventListener("click", function (e) {
+      e.stopPropagation(); showShot(shotIndex - 1);
+    });
+    lightbox.querySelector(".lightbox-next").addEventListener("click", function (e) {
+      e.stopPropagation(); showShot(shotIndex + 1);
+    });
     document.addEventListener("keydown", function (e) {
+      if (lightbox.hidden) return;
       if (e.key === "Escape") closeLightbox();
+      else if (e.key === "ArrowLeft") showShot(shotIndex - 1);
+      else if (e.key === "ArrowRight") showShot(shotIndex + 1);
+    });
+    // Свайп на телефоне: стрелки там мелкие, а листать пальцем привычнее.
+    var touchX = null;
+    lightbox.addEventListener("touchstart", function (e) { touchX = e.touches[0].clientX; }, { passive: true });
+    lightbox.addEventListener("touchend", function (e) {
+      if (touchX === null) return;
+      var dx = e.changedTouches[0].clientX - touchX;
+      touchX = null;
+      if (Math.abs(dx) > 50) {
+        e.preventDefault();
+        showShot(shotIndex + (dx < 0 ? 1 : -1));
+      }
     });
   }
 
@@ -188,7 +229,7 @@
     // slidesPerView: "auto" — слайды разной ширины (реальные скриншоты settings-окна
     // разных вкладок отличаются пропорциями, у двух ещё не готовых — своя, меньшая).
     // Ширину каждого слайда задаёт CSS (fixed height + auto width), не Swiper.
-    new Swiper(".shots-swiper", {
+    shotsSwiper = new Swiper(".shots-swiper", {
       slidesPerView: "auto",
       centeredSlides: true,
       spaceBetween: 24,

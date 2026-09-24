@@ -158,6 +158,31 @@
   /* ---------------------------------------------------------------- */
   /* Swiper — карусель скриншотов                                       */
   /* ---------------------------------------------------------------- */
+  /* ---------------------------------------------------------------- */
+  /* Лайтбокс — скриншот крупно                                         */
+  /* ---------------------------------------------------------------- */
+  var lightbox = document.getElementById("lightbox");
+  var lightboxImg = lightbox ? lightbox.querySelector("img") : null;
+  function openLightbox(img) {
+    if (!lightbox) return;
+    lightboxImg.src = img.currentSrc || img.src;
+    lightboxImg.alt = img.alt;
+    lightbox.hidden = false;
+    document.documentElement.style.overflow = "hidden";
+  }
+  function closeLightbox() {
+    if (!lightbox || lightbox.hidden) return;
+    lightbox.hidden = true;
+    lightboxImg.removeAttribute("src");
+    document.documentElement.style.overflow = "";
+  }
+  if (lightbox) {
+    lightbox.addEventListener("click", closeLightbox);
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") closeLightbox();
+    });
+  }
+
   function initSwiper() {
     if (typeof Swiper === "undefined") return;
     // slidesPerView: "auto" — слайды разной ширины (реальные скриншоты settings-окна
@@ -181,6 +206,13 @@
       breakpoints: {
         640: { spaceBetween: 28 },
         1280: { spaceBetween: 36 }
+      },
+      // Событие Swiper, а не click на картинке: оно не приходит, если
+      // карусель тянули мышью, — иначе каждое перелистывание открывало бы снимок.
+      on: {
+        click: function (swiper, event) {
+          if (event.target && event.target.tagName === "IMG") openLightbox(event.target);
+        }
       }
     });
   }

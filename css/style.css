@@ -266,3 +266,26 @@ body {
 section[id] {
   scroll-margin-top: 84px;
 }
+
+/* -------------------------------------------------------------------- */
+/* Лайтбокс — скриншот крупно                                           */
+/* -------------------------------------------------------------------- */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(20, 22, 34, 0.72);
+  backdrop-filter: blur(6px);
+  cursor: zoom-out;
+}
+.lightbox[hidden] { display: none; }
+.lightbox img {
+  max-width: min(100%, 1400px);
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}

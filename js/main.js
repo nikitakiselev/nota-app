@@ -159,6 +159,106 @@
   /* Swiper — карусель скриншотов                                       */
   /* ---------------------------------------------------------------- */
   /* ---------------------------------------------------------------- */
+  /* Эквалайзер за курсором на первом экране                           */
+  /* ---------------------------------------------------------------- */
+  // Столбики уровня, как в панели записи самого приложения, поднимаются
+  // мягким холмом под курсором. Только там, где есть мышь или трекпад:
+  // на телефоне курсора нет, а бесконечная анимация стоила бы батареи.
+  // И не для тех, кто попросил систему уменьшить движение.
+  (function heroEqualizer() {
+    var hero = document.getElementById("hero");
+    var finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+    if (!hero || !finePointer || reduceMotion) return;
+
+    var canvas = document.createElement("canvas");
+    canvas.setAttribute("aria-hidden", "true");
+    canvas.style.cssText = "position:absolute;inset:0;width:100%;height:100%;pointer-events:none";
+    hero.insertBefore(canvas, hero.firstChild);
+    var ctx = canvas.getContext("2d");
+
+    var GAP = 14, BAR = 7, SIGMA = 110, PEAK = 170;
+    // Подобрано на демо: «живость» 4 из 10. Выше — столбики начинают
+    // дёргаться вразнобой, и это раздражает, а не радует.
+    var LIVELINESS = 0.4;
+    var MINT = [34, 183, 149], VIOLET = [108, 99, 242];
+    var W = 0, H = 0, bars = [], t = 0;
+    var mouseX = 0, inside = false, followX = 0;
+    var running = false, visible = true;
+
+    function resize() {
+      var dpr = window.devicePixelRatio || 1;
+      W = hero.clientWidth; H = hero.clientHeight;
+      canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      var n = Math.ceil(W / GAP);
+      while (bars.length < n) bars.push({ h: 5, v: 0 });
+    }
+    resize();
+    followX = W * 0.6;
+    new ResizeObserver(resize).observe(hero);
+
+    hero.addEventListener("mousemove", function (e) {
+      mouseX = e.clientX - hero.getBoundingClientRect().left;
+      inside = true;
+    });
+    hero.addEventListener("mouseleave", function () { inside = false; });
+
+    function frame() {
+      if (!visible || document.hidden) { running = false; return; }
+      t += 0.016;
+      // Без мыши холм медленно гуляет сам, чтобы экран не был мёртвым.
+      var target = inside ? mouseX : W * (0.6 + 0.28 * Math.sin(t * 0.35));
+      followX += (target - followX) * 0.06;
+      ctx.clearRect(0, 0, W, H);
+      // Пол — нижний край окна, пока секция его перекрывает: первый экран
+      // выше окна, и столбики у низа секции оказывались за краем, невидимые.
+      var rect = hero.getBoundingClientRect();
+      var floor = Math.min(H, window.innerHeight - rect.top) - 14;
+
+      var n = Math.ceil(W / GAP), spring = 0.05 + LIVELINESS * 0.07;
+      for (var i = 0; i < n; i++) {
+        var b = bars[i], x = i * GAP + 4;
+        var near = Math.exp(-((x - followX) * (x - followX)) / (2 * SIGMA * SIGMA));
+        // Две медленные синусоиды со сдвигом по номеру столбика: соседи
+        // движутся согласованно, и по ряду идёт волна, а не шум.
+        var wave = 0.5 + 0.5 * Math.sin(t * (0.8 + LIVELINESS * 1.6) - i * 0.35)
+          * Math.sin(t * (0.5 + LIVELINESS * 0.9) * 0.7 + i * 0.12);
+        // Потолок в пикселях, а не доля экрана: первый экран высокий, и
+        // холм в полвысоты залезал на кнопки и текст.
+        var goal = 5 + near * PEAK * (0.55 + 0.45 * wave) + wave * 6;
+        // Пружина с затуханием: столбик догоняет цель, как стрелка
+        // индикатора, а не перескакивает к ней за кадр.
+        b.v = (b.v + (goal - b.h) * spring) * 0.72;
+        b.h += b.v;
+
+        var k = Math.min(1, near * 1.3);
+        ctx.fillStyle = "rgba(" +
+          Math.round(MINT[0] + (VIOLET[0] - MINT[0]) * k) + "," +
+          Math.round(MINT[1] + (VIOLET[1] - MINT[1]) * k) + "," +
+          Math.round(MINT[2] + (VIOLET[2] - MINT[2]) * k) + "," +
+          (0.22 + near * 0.3).toFixed(3) + ")";
+        ctx.beginPath();
+        if (ctx.roundRect) ctx.roundRect(x, floor - b.h, BAR, b.h, 3.5);
+        else ctx.rect(x, floor - b.h, BAR, b.h);
+        ctx.fill();
+      }
+      requestAnimationFrame(frame);
+    }
+    function start() {
+      if (running || !visible || document.hidden) return;
+      running = true;
+      requestAnimationFrame(frame);
+    }
+    // Ушли ниже первого экрана или на другую вкладку — кадры не считаются.
+    new IntersectionObserver(function (entries) {
+      visible = entries[0].isIntersecting;
+      start();
+    }).observe(hero);
+    document.addEventListener("visibilitychange", start);
+    start();
+  })();
+
+  /* ---------------------------------------------------------------- */
   /* Лайтбокс — скриншот крупно                                         */
   /* ---------------------------------------------------------------- */
   var lightbox = document.getElementById("lightbox");

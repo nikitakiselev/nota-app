@@ -6,9 +6,9 @@
 <title>Nota — голосовой ввод для macOS</title>
 <meta name="description" content="Nota — менюбар-приложение для macOS: удержите правый ⌘, скажите — текст появится в активном окне. Распознавание целиком на вашем Mac, термины вроде gcloud и Terraform не искажаются." />
 
-<link rel="icon" sizes="32x32" href="assets/icons/favicon-32.png">
-<link rel="icon" sizes="16x16" href="assets/icons/favicon-16.png">
-<link rel="apple-touch-icon" href="assets/icons/nota-64.png">
+<link rel="icon" sizes="32x32" href="assets/icons/favicon-32.png?v=65f7ace6">
+<link rel="icon" sizes="16x16" href="assets/icons/favicon-16.png?v=0a0c1225">
+<link rel="apple-touch-icon" href="assets/icons/nota-64.png?v=dbec6a96">
 <meta property="og:title" content="Nota — голосовой ввод для macOS" />
 <meta property="og:description" content="Локальное распознавание речи для macOS: удержите правый ⌘, скажите — текст появится в активном окне. Ни один звук не покидает ваш Mac." />
 <meta property="og:image" content="assets/icons/nota-1024.png" />
@@ -60,7 +60,7 @@
   };
 </script>
 
-<link rel="stylesheet" href="css/style.css?v=0.4.1" />
+<link rel="stylesheet" href="css/style.css?v=5d88ba73" />
 </head>
 <body class="bg-bg text-ink font-sans antialiased selection:bg-violet selection:text-white">
 
@@ -72,7 +72,7 @@
 <header class="fixed top-0 inset-x-0 z-50 border-b border-line/70 bg-bg/80 backdrop-blur-md">
   <div class="mx-auto max-w-[1180px] px-5 sm:px-8 h-16 flex items-center justify-between">
     <a href="#top" class="flex items-center gap-2.5 font-display text-lg font-medium tracking-tight">
-      <img src="assets/icons/nota-256.png" alt="Nota" width="32" height="32" class="w-8 h-8 rounded-xl" />
+      <img src="assets/icons/nota-256.png?v=54fc9585" alt="Nota" width="32" height="32" class="w-8 h-8 rounded-xl" />
       Nota
     </a>
 
@@ -219,7 +219,7 @@
 <!-- ==================================================================== -->
 <section class="reveal py-20 sm:py-28 border-y border-line/70">
   <div class="mx-auto max-w-[720px] px-6 text-center">
-    <img src="assets/icons/nota-256.png" alt="Nota" width="96" height="96"
+    <img src="assets/icons/nota-256.png?v=54fc9585" alt="Nota" width="96" height="96"
          class="mx-auto w-20 h-20 sm:w-24 sm:h-24 rounded-[22%] shadow-lg shadow-ink/10">
     <p class="mt-7 font-display italic text-[clamp(1.35rem,2.6vw,1.9rem)] leading-[1.45] text-ink">
       Нота — придуманный людьми способ записать звук значками.
@@ -303,10 +303,11 @@
         Нейросетевой VAD: нет голоса — нет и выдуманного текста
       </h2>
       <p class="mt-5 text-lg text-ink-soft leading-relaxed">
-        Модели распознавания не умеют отвечать «тут ничего нет». Дайте whisper
-        запись без голоса — тишину, шум, фоновую музыку — и он сочинит фразу из
-        субтитров, на которых учился: «Продолжение следует...» или знаменитое
-        «Субтитры сделал DimaTorzok». Без защиты она попала бы в ваше окно.
+        Whisper учился на видео с субтитрами, а в видео на тишине обычно идут
+        финальные титры. Поэтому на записи без голоса — тишина, шум, фоновая
+        музыка — он не возвращает пустую строку, а выдумывает такую фразу:
+        «Продолжение следует...» или знаменитое «Субтитры сделал DimaTorzok».
+        Без защиты она попала бы в ваше окно.
       </p>
       <p class="mt-4 text-ink-soft leading-relaxed">
         Поэтому когда вы отпускаете клавишу, запись сначала слушает Silero VAD —
@@ -464,56 +465,56 @@
 
         <div class="swiper-slide">
           <figure class="flex flex-col items-center gap-3.5">
-            <img src="assets/screenshots/settings-general@2x.png?v=0.4.1" alt="Настройки Nota, вкладка «Основные»: клавиша диктовки, язык, панель, автозапуск, диагностический лог, детектор речи, версия" class="h-[clamp(230px,30vw,440px)] w-auto max-w-[78vw] cursor-zoom-in" />
+            <img src="assets/screenshots/settings-general@2x.png?v=e1d122b9" alt="Настройки Nota, вкладка «Основные»: клавиша диктовки, язык, панель, автозапуск, диагностический лог, детектор речи, версия" class="h-[clamp(230px,30vw,440px)] w-auto max-w-[78vw] cursor-zoom-in" />
             <figcaption class="font-mono text-xs text-ink-soft text-center max-w-[32ch] leading-relaxed">Основные — клавиша, язык, лог, детектор речи</figcaption>
           </figure>
         </div>
 
         <div class="swiper-slide">
           <figure class="flex flex-col items-center gap-3.5">
-            <img src="assets/screenshots/settings-terms@2x.png?v=0.4.1" alt="Настройки Nota, вкладка «Термины»: список слов, которые модель должна знать" class="h-[clamp(230px,30vw,440px)] w-auto max-w-[78vw] cursor-zoom-in" />
+            <img src="assets/screenshots/settings-terms@2x.png?v=9ebfbdde" alt="Настройки Nota, вкладка «Термины»: список слов, которые модель должна знать" class="h-[clamp(230px,30vw,440px)] w-auto max-w-[78vw] cursor-zoom-in" />
             <figcaption class="font-mono text-xs text-ink-soft text-center max-w-[32ch] leading-relaxed">Термины — слова, которые модель должна знать</figcaption>
           </figure>
         </div>
 
         <div class="swiper-slide">
           <figure class="flex flex-col items-center gap-3.5">
-            <img src="assets/screenshots/settings-replacements@2x.png?v=0.4.1" alt="Настройки Nota, вкладка «Замены»: точные правила после распознавания с проверкой вживую" class="h-[clamp(230px,30vw,440px)] w-auto max-w-[78vw] cursor-zoom-in" />
+            <img src="assets/screenshots/settings-replacements@2x.png?v=e4c42974" alt="Настройки Nota, вкладка «Замены»: точные правила после распознавания с проверкой вживую" class="h-[clamp(230px,30vw,440px)] w-auto max-w-[78vw] cursor-zoom-in" />
             <figcaption class="font-mono text-xs text-ink-soft text-center max-w-[32ch] leading-relaxed">Замены — точные правила с проверкой вживую</figcaption>
           </figure>
         </div>
 
         <div class="swiper-slide">
           <figure class="flex flex-col items-center gap-3.5">
-            <img src="assets/screenshots/settings-phonetics@2x.png?v=0.4.1" alt="Настройки Nota, вкладка «Фонетика»: сопоставление терминов по звучанию" class="h-[clamp(230px,30vw,440px)] w-auto max-w-[78vw] cursor-zoom-in" />
+            <img src="assets/screenshots/settings-phonetics@2x.png?v=84572b7e" alt="Настройки Nota, вкладка «Фонетика»: сопоставление терминов по звучанию" class="h-[clamp(230px,30vw,440px)] w-auto max-w-[78vw] cursor-zoom-in" />
             <figcaption class="font-mono text-xs text-ink-soft text-center max-w-[32ch] leading-relaxed">Фонетика — сопоставление терминов по звучанию</figcaption>
           </figure>
         </div>
 
         <div class="swiper-slide">
           <figure class="flex flex-col items-center gap-3.5">
-            <img src="assets/screenshots/settings-postprocess@2x.png?v=0.4.1" alt="Настройки Nota, вкладка «Постобработка»: исправление текста внешней моделью, выключено по умолчанию" class="h-[clamp(230px,30vw,440px)] w-auto max-w-[78vw] cursor-zoom-in" />
+            <img src="assets/screenshots/settings-postprocess@2x.png?v=4ff60c7b" alt="Настройки Nota, вкладка «Постобработка»: исправление текста внешней моделью, выключено по умолчанию" class="h-[clamp(230px,30vw,440px)] w-auto max-w-[78vw] cursor-zoom-in" />
             <figcaption class="font-mono text-xs text-ink-soft text-center max-w-[32ch] leading-relaxed">Постобработка — внешняя модель, выключена по умолчанию</figcaption>
           </figure>
         </div>
 
         <div class="swiper-slide">
           <figure class="flex flex-col items-center gap-3.5">
-            <img src="assets/screenshots/settings-history@2x.png?v=0.4.1" alt="Настройки Nota, вкладка «История»: последние фразы и превращение правок в правила" class="h-[clamp(230px,30vw,440px)] w-auto max-w-[78vw] cursor-zoom-in" />
+            <img src="assets/screenshots/settings-history@2x.png?v=f9f73eb9" alt="Настройки Nota, вкладка «История»: последние фразы и превращение правок в правила" class="h-[clamp(230px,30vw,440px)] w-auto max-w-[78vw] cursor-zoom-in" />
             <figcaption class="font-mono text-xs text-ink-soft text-center max-w-[32ch] leading-relaxed">История — последние фразы, правка учит словари</figcaption>
           </figure>
         </div>
 
         <div class="swiper-slide">
           <figure class="flex flex-col items-center gap-3.5">
-            <img src="assets/screenshots/settings-usage@2x.png?v=0.4.1" alt="Настройки Nota, вкладка «Расход»: статистика диктовок, темп речи, токены и рубли" class="h-[clamp(230px,30vw,440px)] w-auto max-w-[78vw] cursor-zoom-in" />
+            <img src="assets/screenshots/settings-usage@2x.png?v=07ed3599" alt="Настройки Nota, вкладка «Расход»: статистика диктовок, темп речи, токены и рубли" class="h-[clamp(230px,30vw,440px)] w-auto max-w-[78vw] cursor-zoom-in" />
             <figcaption class="font-mono text-xs text-ink-soft text-center max-w-[32ch] leading-relaxed">Расход — статистика, темп речи, токены</figcaption>
           </figure>
         </div>
 
         <div class="swiper-slide">
           <figure class="flex flex-col items-center gap-3.5">
-            <img src="assets/screenshots/settings-model@2x.png?v=0.4.1" alt="Настройки Nota, вкладка «Модель»: расположение и состояние файла весов" class="h-[clamp(230px,30vw,440px)] w-auto max-w-[78vw] cursor-zoom-in" />
+            <img src="assets/screenshots/settings-model@2x.png?v=045f4057" alt="Настройки Nota, вкладка «Модель»: расположение и состояние файла весов" class="h-[clamp(230px,30vw,440px)] w-auto max-w-[78vw] cursor-zoom-in" />
             <figcaption class="font-mono text-xs text-ink-soft text-center max-w-[32ch] leading-relaxed">Модель — расположение и состояние весов</figcaption>
           </figure>
         </div>
@@ -521,7 +522,7 @@
         <div class="swiper-slide">
           <figure class="flex flex-col items-center gap-3.5">
             <div class="h-[clamp(230px,30vw,440px)] flex items-center">
-              <img src="assets/screenshots/status-panel@2x.png?v=0.4.1" alt="Панель уровня записи во время диктовки" class="h-[clamp(70px,8vw,120px)] w-auto max-w-[78vw] cursor-zoom-in" />
+              <img src="assets/screenshots/status-panel@2x.png?v=618d36d6" alt="Панель уровня записи во время диктовки" class="h-[clamp(70px,8vw,120px)] w-auto max-w-[78vw] cursor-zoom-in" />
             </div>
             <figcaption class="font-mono text-xs text-ink-soft text-center max-w-[32ch] leading-relaxed">Панель записи — уровень звука во время диктовки</figcaption>
           </figure>
@@ -695,7 +696,7 @@
   <div class="mx-auto max-w-[1180px] px-5 sm:px-8 py-16 grid md:grid-cols-[1.1fr_0.9fr] gap-12">
     <div class="reveal">
       <a href="#top" class="flex items-center gap-2.5 font-display text-lg font-medium tracking-tight">
-        <img src="assets/icons/nota-256.png" alt="Nota" width="32" height="32" class="w-8 h-8 rounded-xl" />
+        <img src="assets/icons/nota-256.png?v=54fc9585" alt="Nota" width="32" height="32" class="w-8 h-8 rounded-xl" />
         Nota
       </a>
       <p class="mt-4 text-ink-soft max-w-[42ch] leading-relaxed">
@@ -735,6 +736,6 @@
 <div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-label="Скриншот крупно" hidden>
   <img alt="" />
 </div>
-<script src="js/main.js?v=0.4.1"></script>
+<script src="js/main.js?v=d155732f"></script>
 </body>
 </html>

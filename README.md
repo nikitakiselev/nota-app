@@ -68,3 +68,15 @@ xattr -dr com.apple.quarantine /Applications/Nota.app
 ## Сайт
 
 [nikitakiselev.github.io/nota-app](https://nikitakiselev.github.io/nota-app/)
+
+## Разработка сайта
+
+После любой правки картинок, стилей или скрипта и перед коммитом:
+
+```sh
+python3 scripts/cache-bust.py
+```
+
+Скрипт дописывает к ссылкам в `index.html` хеш содержимого файла
+(`?v=1a2b3c4d`). GitHub Pages разрешает браузерам кэшировать файлы на
+10 минут; без хеша посетители после деплоя видели бы старые скриншоты.

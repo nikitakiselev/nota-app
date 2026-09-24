@@ -288,6 +288,53 @@
 </section>
 
 <!-- ==================================================================== -->
+<!-- SPEECH DETECTOR                                                       -->
+<!-- ==================================================================== -->
+<section id="vad" class="py-24 sm:py-32 border-b border-line/70">
+  <div class="mx-auto max-w-[1180px] px-5 sm:px-8 grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+    <div class="reveal max-w-[58ch]">
+      <span class="font-mono text-xs tracking-wide text-coral">/ ДЕТЕКТОР РЕЧИ</span>
+      <h2 class="mt-4 font-display font-medium text-[clamp(1.9rem,3.4vw,2.75rem)] leading-[1.1] tracking-[-0.01em]">
+        Промолчали — ничего не вставится
+      </h2>
+      <p class="mt-5 text-lg text-ink-soft leading-relaxed">
+        Модели распознавания не умеют отвечать «тут ничего нет». На тишине, шуме
+        или музыке whisper сочиняет фразы из субтитров, на которых учился, —
+        и они попадали бы в ваше окно.
+      </p>
+      <p class="mt-4 text-ink-soft leading-relaxed">
+        Поэтому перед распознаванием запись проверяет детектор речи Silero. Нет
+        голоса — модель не запускается вовсе. Проверка занимает миллисекунды и тоже
+        идёт локально. Порог и минимальную длительность речи можно настроить,
+        а детектор — выключить.
+      </p>
+    </div>
+
+    <div class="reveal rounded-4xl bg-card border border-line/70 p-6 sm:p-7 shadow-card">
+      <span class="font-mono text-xs text-ink-faint">замер · 5 записей без речи</span>
+      <div class="mt-4 grid gap-3 font-mono text-xs sm:text-sm leading-relaxed">
+        <div class="rounded-xl bg-bg-alt px-4 py-3 flex items-start justify-between gap-4">
+          <span class="text-ink-soft">тишина</span>
+          <span class="text-coral line-through decoration-1 text-right">«Продолжение следует…»</span>
+        </div>
+        <div class="rounded-xl bg-bg-alt px-4 py-3 flex items-start justify-between gap-4">
+          <span class="text-ink-soft">шум комнаты</span>
+          <span class="text-coral line-through decoration-1 text-right">«Время обновления: 06:00»</span>
+        </div>
+        <div class="rounded-xl bg-bg-alt px-4 py-3 flex items-start justify-between gap-4">
+          <span class="text-ink-soft">музыка без голоса</span>
+          <span class="text-coral line-through decoration-1 text-right">«Продолжение следует…»</span>
+        </div>
+      </div>
+      <p class="mt-5 text-sm text-ink-soft leading-relaxed">
+        Без детектора — мусор в 5 случаях из 5. С детектором все пять отсечены,
+        а речь проходит, даже тихая, на 30&nbsp;дБ ниже обычной.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ==================================================================== -->
 <!-- CORRECTION LAYERS                                                     -->
 <!-- ==================================================================== -->
 <section id="layers" class="py-24 sm:py-32">

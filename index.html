@@ -279,13 +279,12 @@
 
       <div class="rounded-4xl bg-card border border-line/70 p-7 shadow-card">
         <div class="w-11 h-11 rounded-2xl bg-amber-soft grid place-items-center">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgb(var(--amber))" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgb(var(--amber))" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6Z"/><path d="m9 12 2 2 4-4"/></svg>
         </div>
-        <h3 class="mt-5 font-display text-xl font-medium">Одно исключение — явное</h3>
+        <h3 class="mt-5 font-display text-xl font-medium">Без исключений</h3>
         <p class="mt-2.5 text-ink-soft leading-relaxed">
-          Постобработка через внешний API — единственный случай, когда текст может
-          уйти наружу. Она выключена по умолчанию и предупреждает, куда именно
-          отправляется текст, перед тем как вы её включите.
+          Ни аккаунта, ни API-ключей. Текст диктовок не уходит с Mac ни при каких
+          настройках, а статистика хранит только числа — и тоже лежит здесь.
         </p>
       </div>
     </div>
@@ -352,25 +351,33 @@
     <div class="reveal max-w-[62ch]">
       <span class="font-mono text-xs tracking-wide text-violet">/ КОРРЕКЦИЯ ТЕРМИНОВ</span>
       <h2 class="mt-4 font-display font-medium text-[clamp(1.9rem,3.4vw,2.75rem)] leading-[1.1] tracking-[-0.01em]">
-        Термин проходит четыре фильтра, прежде чем стать текстом
+        Слово пишется в словарь один раз — остальное Nota делает сама
       </h2>
       <p class="mt-5 text-lg text-ink-soft leading-relaxed">
-        Каждый слой решает свою задачу и не заменяет остальные — от подсказки,
-        которая формирует само распознавание, до необязательной правки стиля в конце.
+        Один словарь: слово — так, как оно должно писаться, а в скобках, если
+        нужно, — во что его превращает модель. Из этого собираются три защиты.
       </p>
     </div>
 
-    <div class="reveal-stagger mt-16 grid lg:grid-cols-4 gap-5 lg:gap-4 relative">
+    <div class="reveal mt-10 max-w-[62ch] rounded-3xl bg-card border border-line/70 shadow-card px-6 py-5 font-mono text-sm leading-relaxed">
+      <p class="text-ink-faint"># dictionary.yaml</p>
+      <p>words:</p>
+      <p>&nbsp;&nbsp;- terraform</p>
+      <p>&nbsp;&nbsp;- Caddy: <span class="text-violet">[кадди]</span></p>
+      <p>&nbsp;&nbsp;- Claude Code: <span class="text-violet">[код-код, клад код, плот кода]</span></p>
+    </div>
+
+    <div class="reveal-stagger mt-10 grid lg:grid-cols-3 gap-5 lg:gap-4 relative">
       <!-- соединительная линия для десктопа -->
-      <div class="hidden lg:block absolute top-[52px] left-[12.5%] right-[12.5%] h-px bg-line" aria-hidden="true"></div>
+      <div class="hidden lg:block absolute top-[52px] left-[16.6%] right-[16.6%] h-px bg-line" aria-hidden="true"></div>
 
       <div class="relative rounded-4xl bg-card border border-line/70 p-6 shadow-card">
         <span class="font-mono text-xs text-ink-faint">ШАГ 1 · до распознавания</span>
         <div class="mt-3 w-10 h-10 rounded-full bg-violet text-white grid place-items-center font-mono text-sm font-medium relative z-10">01</div>
         <h3 class="mt-4 font-display text-lg font-medium">Подсказка декодеру</h3>
         <p class="mt-2 text-sm text-ink-soft leading-relaxed">
-          Список терминов уходит в whisper ещё до начала записи и заранее
-          сдвигает вероятности словаря в его пользу.
+          Слова словаря уходят в whisper ещё до начала записи и заранее
+          сдвигают вероятности в их пользу — модель пишет их правильно сама.
         </p>
         <div class="mt-4 rounded-xl bg-bg-alt px-3 py-2.5 font-mono text-xs leading-relaxed">
           <span class="text-coral line-through decoration-1">реформ</span>
@@ -380,56 +387,42 @@
       </div>
 
       <div class="relative rounded-4xl bg-card border border-line/70 p-6 shadow-card">
-        <span class="font-mono text-xs text-ink-faint">ШАГ 2 · dictionary.yaml</span>
+        <span class="font-mono text-xs text-ink-faint">ШАГ 2 · после распознавания</span>
         <div class="mt-3 w-10 h-10 rounded-full bg-violet text-white grid place-items-center font-mono text-sm font-medium relative z-10">02</div>
-        <h3 class="mt-4 font-display text-lg font-medium">Точные замены</h3>
+        <h3 class="mt-4 font-display text-lg font-medium">Варианты и регистр</h3>
         <p class="mt-2 text-sm text-ink-soft leading-relaxed">
-          Регулярные выражения для устойчивых, всегда одинаковых искажений
-          после распознавания.
+          Если модель всё же услышала по-своему, вариант из скобок заменяется
+          словом — только целым словом. Латинское слово всегда пишется как в словаре.
         </p>
         <div class="mt-4 rounded-xl bg-bg-alt px-3 py-2.5 font-mono text-xs leading-relaxed">
-          <span class="text-coral line-through decoration-1">пост грез</span>
+          <span class="text-coral line-through decoration-1">клад код</span>
           <span class="text-ink-faint mx-1">→</span>
-          <span class="text-mint">PostgreSQL</span>
+          <span class="text-mint">Claude Code</span>
         </div>
       </div>
 
       <div class="relative rounded-4xl bg-card border border-line/70 p-6 shadow-card">
-        <span class="font-mono text-xs text-ink-faint">ШАГ 3 · glossary.yaml</span>
-        <div class="mt-3 w-10 h-10 rounded-full bg-violet text-white grid place-items-center font-mono text-sm font-medium relative z-10">03</div>
-        <h3 class="mt-4 font-display text-lg font-medium">Фонетический словарь</h3>
+        <span class="font-mono text-xs text-ink-faint">ШАГ 3 · для опытных</span>
+        <div class="mt-3 w-10 h-10 rounded-full bg-card text-violet border-2 border-violet grid place-items-center font-mono text-sm font-medium relative z-10">03</div>
+        <h3 class="mt-4 font-display text-lg font-medium">Регулярные выражения</h3>
         <p class="mt-2 text-sm text-ink-soft leading-relaxed">
-          Сравнивает слово по звучанию, а не по буквам — ловит любые варианты
-          произношения однословных терминов.
+          Для того, что словом не выразить: правило с контекстом, которое
+          срабатывает только рядом с нужным словом.
         </p>
         <div class="mt-4 rounded-xl bg-bg-alt px-3 py-2.5 font-mono text-xs leading-relaxed">
-          <span class="text-coral line-through decoration-1">кубернетес</span>
+          nginx <span class="text-coral line-through decoration-1">статистику</span>
           <span class="text-ink-faint mx-1">→</span>
-          <span class="text-mint">Kubernetes</span>
-        </div>
-      </div>
-
-      <div class="relative rounded-4xl bg-card border border-line/70 p-6 shadow-card">
-        <span class="font-mono text-xs text-ink-faint">ШАГ 4 · опционально</span>
-        <div class="mt-3 w-10 h-10 rounded-full bg-card text-violet border-2 border-violet grid place-items-center font-mono text-sm font-medium relative z-10">04</div>
-        <h3 class="mt-4 font-display text-lg font-medium">Постобработка</h3>
-        <p class="mt-2 text-sm text-ink-soft leading-relaxed">
-          Любая OpenAI-совместимая модель — облачная или локальная (Ollama,
-          LM Studio) — причёсывает стиль и пунктуацию. Выключена по умолчанию.
-        </p>
-        <div class="mt-4 rounded-xl bg-amber-soft px-3 py-2.5 font-mono text-[11px] leading-relaxed text-ink-soft">
-          единственный шаг, где текст может покинуть Mac — и только если вы сами это включили
+          nginx <span class="text-mint">статику</span>
         </div>
       </div>
     </div>
 
     <p class="reveal mt-10 text-ink-soft max-w-[70ch]">
-      Все четыре слоя настраиваются во вкладках «Термины», «Замены», «Фонетика»
-      и «Постобработка». Вставьте распознанный текст в поле проверки — и сразу
-      увидите, что с ним сделают ваши правила, ещё до того как сохраните их.
-      А правило можно вообще не писать руками: поправьте слово в своей же фразе
-      на вкладке «История» — приложение сравнит с исходным и предложит запомнить
-      исправление, само выбрав, термин это или замена.
+      Всё это — одна вкладка «Словарь». Вставьте распознанную фразу в поле
+      проверки — и сразу увидите, что с ней сделает словарь, ещё до того как
+      сохраните его. А слово можно вообще не вписывать руками: поправьте его
+      в своей же фразе на вкладке «История» — приложение предложит запомнить
+      исправление вариантом или новым словом.
     </p>
   </div>
 </section>
@@ -442,11 +435,11 @@
     <div class="reveal max-w-[62ch]">
       <span class="font-mono text-xs tracking-wide text-violet">/ ИНТЕРФЕЙС</span>
       <h2 class="mt-4 font-display font-medium text-[clamp(1.9rem,3.4vw,2.75rem)] leading-[1.1] tracking-[-0.01em]">
-        Каждое правило видно и проверяется на месте
+        Всё видно и проверяется на месте
       </h2>
       <p class="mt-5 text-lg text-ink-soft leading-relaxed">
-        Восемь вкладок: Основные, Термины, Замены, Фонетика, Постобработка, История,
-        Расход, Модель. Каждое правило проверяется на живом тексте прямо в окне.
+        Пять вкладок: Основные, Словарь, История, Статистика, Модель. Каждое
+        слово словаря проверяется на живом тексте прямо в окне.
         Нажмите на снимок, чтобы открыть его крупно.
       </p>
     </div>
@@ -458,56 +451,35 @@
 
         <div class="swiper-slide">
           <figure class="flex flex-col items-center gap-3.5">
-            <img src="assets/screenshots/settings-general@2x.png?v=e1d122b9" alt="Настройки Nota, вкладка «Основные»: клавиша диктовки, язык, панель, автозапуск, диагностический лог, детектор речи, версия" class="h-[clamp(230px,30vw,440px)] w-auto max-w-[78vw] cursor-zoom-in" />
+            <img src="assets/screenshots/settings-general@2x.png?v=63a7bf6c" alt="Настройки Nota, вкладка «Основные»: клавиша диктовки, язык, панель, автозапуск, диагностический лог, детектор речи, версия" class="h-[clamp(230px,30vw,440px)] w-auto max-w-[78vw] cursor-zoom-in" />
             <figcaption class="font-mono text-xs text-ink-soft text-center max-w-[32ch] leading-relaxed">Основные — клавиша, язык, лог, детектор речи</figcaption>
           </figure>
         </div>
 
         <div class="swiper-slide">
           <figure class="flex flex-col items-center gap-3.5">
-            <img src="assets/screenshots/settings-terms@2x.png?v=9ebfbdde" alt="Настройки Nota, вкладка «Термины»: список слов, которые модель должна знать" class="h-[clamp(230px,30vw,440px)] w-auto max-w-[78vw] cursor-zoom-in" />
-            <figcaption class="font-mono text-xs text-ink-soft text-center max-w-[32ch] leading-relaxed">Термины — слова, которые модель должна знать</figcaption>
+            <img src="assets/screenshots/settings-dictionary@2x.png?v=97fff259" alt="Настройки Nota, вкладка «Словарь»: слова и варианты, во что их превращает модель, с проверкой фразы вживую" class="h-[clamp(230px,30vw,440px)] w-auto max-w-[78vw] cursor-zoom-in" />
+            <figcaption class="font-mono text-xs text-ink-soft text-center max-w-[32ch] leading-relaxed">Словарь — слова и во что их превращает модель</figcaption>
           </figure>
         </div>
 
         <div class="swiper-slide">
           <figure class="flex flex-col items-center gap-3.5">
-            <img src="assets/screenshots/settings-replacements@2x.png?v=e4c42974" alt="Настройки Nota, вкладка «Замены»: точные правила после распознавания с проверкой вживую" class="h-[clamp(230px,30vw,440px)] w-auto max-w-[78vw] cursor-zoom-in" />
-            <figcaption class="font-mono text-xs text-ink-soft text-center max-w-[32ch] leading-relaxed">Замены — точные правила с проверкой вживую</figcaption>
+            <img src="assets/screenshots/settings-rules@2x.png?v=8f03ea82" alt="Настройки Nota, вкладка «Словарь», раздел «Регулярные выражения»: правила для опытных" class="h-[clamp(230px,30vw,440px)] w-auto max-w-[78vw] cursor-zoom-in" />
+            <figcaption class="font-mono text-xs text-ink-soft text-center max-w-[32ch] leading-relaxed">Регулярные выражения — для того, что словом не выразить</figcaption>
           </figure>
         </div>
 
         <div class="swiper-slide">
           <figure class="flex flex-col items-center gap-3.5">
-            <img src="assets/screenshots/settings-phonetics@2x.png?v=84572b7e" alt="Настройки Nota, вкладка «Фонетика»: сопоставление терминов по звучанию" class="h-[clamp(230px,30vw,440px)] w-auto max-w-[78vw] cursor-zoom-in" />
-            <figcaption class="font-mono text-xs text-ink-soft text-center max-w-[32ch] leading-relaxed">Фонетика — сопоставление терминов по звучанию</figcaption>
+            <img src="assets/screenshots/settings-stats@2x.png?v=212ee11c" alt="Настройки Nota, вкладка «Статистика»: слова, темп речи, сэкономленное время и график по дням" class="h-[clamp(230px,30vw,440px)] w-auto max-w-[78vw] cursor-zoom-in" />
+            <figcaption class="font-mono text-xs text-ink-soft text-center max-w-[32ch] leading-relaxed">Статистика — слова, темп речи, экономия времени</figcaption>
           </figure>
         </div>
 
         <div class="swiper-slide">
           <figure class="flex flex-col items-center gap-3.5">
-            <img src="assets/screenshots/settings-postprocess@2x.png?v=4ff60c7b" alt="Настройки Nota, вкладка «Постобработка»: исправление текста внешней моделью, выключено по умолчанию" class="h-[clamp(230px,30vw,440px)] w-auto max-w-[78vw] cursor-zoom-in" />
-            <figcaption class="font-mono text-xs text-ink-soft text-center max-w-[32ch] leading-relaxed">Постобработка — внешняя модель, выключена по умолчанию</figcaption>
-          </figure>
-        </div>
-
-        <div class="swiper-slide">
-          <figure class="flex flex-col items-center gap-3.5">
-            <img src="assets/screenshots/settings-history@2x.png?v=f9f73eb9" alt="Настройки Nota, вкладка «История»: последние фразы и превращение правок в правила" class="h-[clamp(230px,30vw,440px)] w-auto max-w-[78vw] cursor-zoom-in" />
-            <figcaption class="font-mono text-xs text-ink-soft text-center max-w-[32ch] leading-relaxed">История — последние фразы, правка учит словари</figcaption>
-          </figure>
-        </div>
-
-        <div class="swiper-slide">
-          <figure class="flex flex-col items-center gap-3.5">
-            <img src="assets/screenshots/settings-usage@2x.png?v=07ed3599" alt="Настройки Nota, вкладка «Расход»: статистика диктовок, темп речи, токены и рубли" class="h-[clamp(230px,30vw,440px)] w-auto max-w-[78vw] cursor-zoom-in" />
-            <figcaption class="font-mono text-xs text-ink-soft text-center max-w-[32ch] leading-relaxed">Расход — статистика, темп речи, токены</figcaption>
-          </figure>
-        </div>
-
-        <div class="swiper-slide">
-          <figure class="flex flex-col items-center gap-3.5">
-            <img src="assets/screenshots/settings-model@2x.png?v=045f4057" alt="Настройки Nota, вкладка «Модель»: расположение и состояние файла весов" class="h-[clamp(230px,30vw,440px)] w-auto max-w-[78vw] cursor-zoom-in" />
+            <img src="assets/screenshots/settings-model@2x.png?v=ff684fce" alt="Настройки Nota, вкладка «Модель»: расположение и состояние файла весов" class="h-[clamp(230px,30vw,440px)] w-auto max-w-[78vw] cursor-zoom-in" />
             <figcaption class="font-mono text-xs text-ink-soft text-center max-w-[32ch] leading-relaxed">Модель — расположение и состояние весов</figcaption>
           </figure>
         </div>
@@ -630,8 +602,8 @@
         Сколько сказано и сколько времени это сэкономило
       </h2>
       <p class="mt-5 text-lg text-ink-soft leading-relaxed">
-        Слова, темп речи, экономия против набора руками, серия дней подряд
-        и расход на постобработку — во вкладке «Расход», графики на Swift Charts.
+        Слова, темп речи, экономия против набора руками и серия дней подряд —
+        во вкладке «Статистика», график на Swift Charts.
       </p>
     </div>
 
@@ -659,7 +631,7 @@
           <div class="flex-1 rounded-t-lg bg-violet" style="height:82%"></div>
         </div>
         <p class="mt-6 text-sm text-ink-soft">
-          Реальный график — с вашими цифрами — во вкладке «Расход» окна настроек.
+          Реальный график — с вашими цифрами — во вкладке «Статистика» окна настроек.
         </p>
       </div>
 
@@ -678,8 +650,8 @@
           <p class="mt-2 font-display text-2xl">3.4 <span class="text-base text-ink-soft font-sans">ч/нед</span></p>
         </div>
         <div class="rounded-3xl bg-card border border-line/70 shadow-card p-5">
-          <p class="font-mono text-xs text-ink-faint">постобработка</p>
-          <p class="mt-2 font-display text-2xl">0 <span class="text-base text-ink-soft font-sans">₽ (выкл.)</span></p>
+          <p class="font-mono text-xs text-ink-faint">распознавание</p>
+          <p class="mt-2 font-display text-2xl">1.5 <span class="text-base text-ink-soft font-sans">с в среднем</span></p>
         </div>
       </div>
     </div>

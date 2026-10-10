@@ -115,33 +115,35 @@ body {
 }
 
 /* -------------------------------------------------------------------- */
-/* Hero: живая панель уровня записи                                     */
+/* Пиксельный аватар: растягивается без сглаживания, точка к точке        */
 /* -------------------------------------------------------------------- */
-.meter-bars {
-  display: flex;
-  align-items: flex-end;
-  gap: 3px;
-  height: 100%;
+.nota-avatar {
+  image-rendering: pixelated;
 }
-.meter-bars span {
-  flex: 1 1 auto;
-  height: 100%;
-  border-radius: 3px;
-  background: rgb(var(--mint));
-  animation: meter-pulse 1.6s ease-in-out infinite;
-  animation-play-state: running;
+.avatar-stage {
+  background: radial-gradient(120% 95% at 15% 0%, #313a6e 0%, #1d1c36 48%, #0e0e17 100%);
 }
-@keyframes meter-pulse {
-  0%, 100% { transform: scaleY(var(--h-min, 0.25)); }
-  50% { transform: scaleY(var(--h-max, 1)); }
+.avatar-state {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 6.5rem 1fr;
+  gap: 0.5rem;
+  text-align: left;
+  padding: 0.45rem 0.75rem;
+  border-radius: 0.75rem;
+  color: rgb(var(--ink-soft));
+  transition: background-color 0.2s, color 0.2s;
 }
-.meter-bars span { transform-origin: bottom; }
-
-@media (prefers-reduced-motion: reduce) {
-  .meter-bars span {
-    animation: none;
-    transform: scaleY(var(--h-max, 0.7));
-  }
+.avatar-state b {
+  font-weight: 500;
+  color: rgb(var(--ink));
+}
+.avatar-state:hover {
+  background: rgb(var(--bg-alt));
+}
+.avatar-state.is-current {
+  background: rgb(var(--mint-soft));
+  color: rgb(var(--ink));
 }
 
 /* Печатающийся transcript в hero-мокапе */
@@ -157,32 +159,6 @@ body {
 }
 @media (prefers-reduced-motion: reduce) {
   .typewriter-caret { animation: none; }
-}
-
-/* -------------------------------------------------------------------- */
-/* dBFS-метр (секция «Индикатор уровня»)                                */
-/* -------------------------------------------------------------------- */
-.dbfs-scale {
-  background: linear-gradient(
-    to top,
-    rgb(var(--coral)) 0%,
-    rgb(var(--coral)) 35%,
-    rgb(var(--mint)) 35%,
-    rgb(var(--mint)) 82%,
-    rgb(var(--amber)) 82%,
-    rgb(var(--amber)) 100%
-  );
-}
-.dbfs-peak {
-  animation: peak-hold 3.2s ease-in-out infinite;
-}
-@keyframes peak-hold {
-  0%, 8% { bottom: 40%; }
-  45%, 55% { bottom: 78%; }
-  92%, 100% { bottom: 40%; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .dbfs-peak { animation: none; bottom: 60%; }
 }
 
 /* -------------------------------------------------------------------- */

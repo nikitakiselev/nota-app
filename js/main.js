@@ -69,16 +69,22 @@
   }
 
   /* ---------------------------------------------------------------- */
-  /* Hero: уровень записи — органичные случайные амплитуды              */
+  /* Hero: аватар в такт печатающемуся тексту                           */
   /* ---------------------------------------------------------------- */
-  document.querySelectorAll(".meter-bars span").forEach(function (bar, i) {
-    var min = 0.15 + Math.random() * 0.25;
-    var max = 0.55 + Math.random() * 0.45;
-    bar.style.setProperty("--h-min", min.toFixed(2));
-    bar.style.setProperty("--h-max", max.toFixed(2));
-    bar.style.animationDelay = (i * 0.09).toFixed(2) + "s";
-    bar.style.animationDuration = (1.1 + Math.random() * 0.9).toFixed(2) + "s";
-  });
+  // Сырой текст печатается, пока «зажат ⌘» — аватар слушает; стирается —
+  // распознаёт; исправленный текст — галочка, как после вставки.
+  var heroCanvas = document.getElementById("hero-avatar");
+  var heroHotkey = document.getElementById("hero-hotkey");
+  var heroAvatar = heroCanvas && window.NotaAvatar
+    ? new window.NotaAvatar(heroCanvas, {
+        onState: function (state) {
+          if (heroHotkey) heroHotkey.style.opacity = state === "listening" || reduceMotion ? "1" : "0";
+        }
+      })
+    : null;
+  function heroState(state) {
+    if (heroAvatar && !reduceMotion) heroAvatar.setState(state);
+  }
 
   /* ---------------------------------------------------------------- */
   /* Hero: печатающийся transcript — распознанное → исправленное        */
@@ -95,6 +101,7 @@
     if (!typeEl) return;
     var pair = pairs[Math.floor(Math.random() * pairs.length)];
     var state = { phase: "raw", i: 0 };
+    heroState("listening");
 
     function render(text, cls) {
       typeEl.innerHTML =
@@ -115,6 +122,7 @@
         if (state.i >= pair.raw.length) {
           setTimeout(function () {
             state.phase = "erase";
+            heroState("transcribing");
             step();
           }, 650);
           return;
@@ -125,6 +133,7 @@
         if (state.i <= 0) {
           state.phase = "fixed";
           state.i = 0;
+          heroState("done");
           setTimeout(step, 150);
           return;
         }
@@ -141,6 +150,44 @@
     step();
   }
   typewriter();
+
+  /* ---------------------------------------------------------------- */
+  /* Раздел «Аватар»: все состояния по кругу или одно по нажатию        */
+  /* ---------------------------------------------------------------- */
+  (function avatarDemo() {
+    var canvas = document.getElementById("avatar-demo");
+    if (!canvas || !window.NotaAvatar) return;
+    var buttons = document.querySelectorAll("#avatar-states [data-state]");
+    var demo = new window.NotaAvatar(canvas, {
+      onState: function (state) {
+        buttons.forEach(function (b) { b.classList.toggle("is-current", b.dataset.state === state); });
+      }
+    });
+    // Длительности — как в живой диктовке: подключение, фраза, ~1.5 с распознавания.
+    var scenario = [["idle", 3.6], ["connecting", 1.6], ["listening", 4.6], ["transcribing", 1.7], ["done", 1.4]];
+    var step = 0, timer = null;
+    function next() {
+      var item = scenario[step % scenario.length];
+      step++;
+      demo.setState(item[0]);
+      timer = setTimeout(next, item[1] * 1000);
+    }
+    buttons.forEach(function (button) {
+      button.addEventListener("click", function () {
+        clearTimeout(timer);
+        demo.keepDone = true;
+        demo.setState(button.dataset.state);
+      });
+    });
+    var cycle = document.getElementById("avatar-cycle");
+    if (cycle) cycle.addEventListener("click", function () {
+      clearTimeout(timer);
+      demo.keepDone = false;
+      step = 0;
+      next();
+    });
+    if (reduceMotion) demo.setState("idle"); else next();
+  })();
 
   /* ---------------------------------------------------------------- */
   /* Placeholder-скриншоты: скрыть подпись, если картинка реально есть  */
@@ -161,8 +208,7 @@
   /* ---------------------------------------------------------------- */
   /* Эквалайзер за курсором на первом экране                           */
   /* ---------------------------------------------------------------- */
-  // Столбики уровня, как в панели записи самого приложения, поднимаются
-  // мягким холмом под курсором. Только там, где есть мышь или трекпад:
+  // Столбики уровня поднимаются мягким холмом под курсором. Только там, где есть мышь или трекпад:
   // на телефоне курсора нет, а бесконечная анимация стоила бы батареи.
   // И не для тех, кто попросил систему уменьшить движение.
   (function heroEqualizer() {

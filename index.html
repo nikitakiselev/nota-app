@@ -60,7 +60,7 @@
   };
 </script>
 
-<link rel="stylesheet" href="css/style.css?v=200f523b" />
+<link rel="stylesheet" href="css/style.css?v=17d22151" />
 </head>
 <body class="bg-bg text-ink font-sans antialiased selection:bg-violet selection:text-white">
 
@@ -80,7 +80,7 @@
       <a href="#privacy" class="hover:text-ink transition-colors">Приватность</a>
       <a href="#layers" class="hover:text-ink transition-colors">Коррекция</a>
       <a href="#screenshots" class="hover:text-ink transition-colors">Интерфейс</a>
-      <a href="#meter" class="hover:text-ink transition-colors">Индикатор</a>
+      <a href="#avatar" class="hover:text-ink transition-colors">Аватар</a>
       <a href="#stats" class="hover:text-ink transition-colors">Статистика</a>
     </nav>
 
@@ -100,7 +100,7 @@
     <a href="#privacy" class="rounded-xl px-3 py-2.5 text-ink-soft hover:bg-bg-alt hover:text-ink transition-colors">Приватность</a>
     <a href="#layers" class="rounded-xl px-3 py-2.5 text-ink-soft hover:bg-bg-alt hover:text-ink transition-colors">Коррекция</a>
     <a href="#screenshots" class="rounded-xl px-3 py-2.5 text-ink-soft hover:bg-bg-alt hover:text-ink transition-colors">Интерфейс</a>
-    <a href="#meter" class="rounded-xl px-3 py-2.5 text-ink-soft hover:bg-bg-alt hover:text-ink transition-colors">Индикатор</a>
+    <a href="#avatar" class="rounded-xl px-3 py-2.5 text-ink-soft hover:bg-bg-alt hover:text-ink transition-colors">Аватар</a>
     <a href="#stats" class="rounded-xl px-3 py-2.5 text-ink-soft hover:bg-bg-alt hover:text-ink transition-colors">Статистика</a>
     <a href="https://github.com/nikitakiselev/nota-app/releases/latest" class="mt-1 rounded-xl px-3 py-2.5 font-medium text-ink">Скачать</a>
     <a href="https://pay.cloudtips.ru/p/e2a1bf31" class="rounded-xl px-3 py-2.5 text-ink-soft hover:bg-bg-alt transition-colors">Поддержать разработчика</a>
@@ -173,7 +173,7 @@
       </dl>
     </div>
 
-    <!-- Мокап: панель уровня + коррекция терминов «на лету» -->
+    <!-- Мокап: аватар + коррекция терминов «на лету» -->
     <div class="reveal relative">
       <div class="relative rounded-5xl bg-gradient-to-br from-bg-alt to-card p-4 sm:p-5 shadow-soft border border-line/60">
         <div class="relative rounded-4xl bg-[#e9ecf9] overflow-hidden aspect-[6/5]">
@@ -188,16 +188,9 @@
             <span class="w-4 h-4 rounded bg-violet/15"></span>
           </div>
 
-          <!-- плавающая панель уровня записи -->
-          <div class="absolute top-14 right-4 flex items-center gap-2 rounded-full bg-white/95 shadow-card px-3 py-2 h-10 w-[132px] border border-line/50">
-            <span class="relative flex w-2 h-2">
-              <span class="absolute inline-flex h-full w-full rounded-full bg-coral opacity-75 motion-safe:animate-ping"></span>
-              <span class="relative inline-flex rounded-full h-2 w-2 bg-coral"></span>
-            </span>
-            <span class="meter-bars h-5 flex-1">
-              <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
-            </span>
-          </div>
+          <!-- аватар Nota: слушает, распознаёт, ставит галочку в такт печатающемуся тексту -->
+          <canvas id="hero-avatar" class="nota-avatar absolute top-12 right-3 w-[76px] h-[76px] sm:w-[114px] sm:h-[114px]"
+                  role="img" aria-label="Пиксельный аватар Nota: короб с нотой и экраном-осциллографом"></canvas>
 
           <!-- «текстовое поле» с печатающейся коррекцией -->
           <div class="absolute left-4 right-4 bottom-4 rounded-2xl bg-ink/95 text-white/90 px-4 py-3.5 font-mono text-[13px] sm:text-sm shadow-lg min-h-[3.2rem] flex items-center">
@@ -205,7 +198,7 @@
             <span id="typewriter" class="whitespace-pre"></span>
           </div>
 
-          <div class="absolute left-4 top-14 font-mono text-[11px] text-ink-soft bg-white/80 rounded-full px-2.5 py-1">
+          <div id="hero-hotkey" class="absolute left-4 top-14 font-mono text-[11px] text-ink-soft bg-white/80 rounded-full px-2.5 py-1 transition-opacity duration-300">
             правый ⌘ удержан
           </div>
         </div>
@@ -451,8 +444,8 @@
 
         <div class="swiper-slide">
           <figure class="flex flex-col items-center gap-3.5">
-            <img src="assets/screenshots/settings-general@2x.png?v=63a7bf6c" alt="Настройки Nota, вкладка «Основные»: клавиша диктовки, язык, панель, автозапуск, диагностический лог, детектор речи, версия" class="h-[clamp(230px,30vw,440px)] w-auto max-w-[78vw] cursor-zoom-in" />
-            <figcaption class="font-mono text-xs text-ink-soft text-center max-w-[32ch] leading-relaxed">Основные — клавиша, язык, лог, детектор речи</figcaption>
+            <img src="assets/screenshots/settings-general@2x.png?v=e7be2903" alt="Настройки Nota, вкладка «Основные»: клавиша диктовки, язык, аватар, автозапуск, диагностический лог, детектор речи, версия" class="h-[clamp(230px,30vw,440px)] w-auto max-w-[78vw] cursor-zoom-in" />
+            <figcaption class="font-mono text-xs text-ink-soft text-center max-w-[32ch] leading-relaxed">Основные — клавиша, язык, аватар, детектор речи</figcaption>
           </figure>
         </div>
 
@@ -494,9 +487,9 @@
         <div class="swiper-slide">
           <figure class="flex flex-col items-center gap-3.5">
             <div class="h-[clamp(230px,30vw,440px)] flex items-center">
-              <img src="assets/screenshots/status-panel@2x.png?v=618d36d6" alt="Панель уровня записи во время диктовки" class="h-[clamp(70px,8vw,120px)] w-auto max-w-[78vw] cursor-zoom-in" />
+              <img src="assets/screenshots/avatar@2x.png?v=bf66c946" alt="Аватар Nota на рабочем столе: короб с нотой на макушке, на зелёном экране — глаза" class="nota-avatar h-[122px] sm:h-[244px] w-auto max-w-[78vw] cursor-zoom-in" />
             </div>
-            <figcaption class="font-mono text-xs text-ink-soft text-center max-w-[32ch] leading-relaxed">Панель записи — уровень звука во время диктовки</figcaption>
+            <figcaption class="font-mono text-xs text-ink-soft text-center max-w-[32ch] leading-relaxed">Аватар — висит на экране, моргает и слушает</figcaption>
           </figure>
         </div>
 
@@ -509,90 +502,57 @@
 </section>
 
 <!-- ==================================================================== -->
-<!-- METER                                                                 -->
+<!-- AVATAR                                                                -->
 <!-- ==================================================================== -->
-<section id="meter" class="py-24 sm:py-32">
+<section id="avatar" class="py-24 sm:py-32">
   <div class="mx-auto max-w-[1180px] px-5 sm:px-8 grid lg:grid-cols-[0.95fr_1.05fr] gap-16 items-center">
     <div class="reveal order-2 lg:order-1">
-      <span class="font-mono text-xs tracking-wide text-coral">/ ИНДИКАТОР УРОВНЯ</span>
+      <span class="font-mono text-xs tracking-wide text-coral">/ АВАТАР</span>
       <h2 class="mt-4 font-display font-medium text-[clamp(1.9rem,3.4vw,2.75rem)] leading-[1.1] tracking-[-0.01em]">
-        Видно, что микрофон слышит, — ещё до конца фразы
+        Видно, что Nota слушает, — ещё до конца фразы
       </h2>
       <p class="mt-5 text-lg text-ink-soft leading-relaxed">
-        Пока вы говорите, панель показывает уровень по шкале дБФС и держит
-        метку самого громкого звука. Догадываться, услышал ли микрофон, не
-        нужно: если громкости не хватает, приложение скажет об этом словами.
+        На экране живёт маленький пиксельный персонаж: короб с нотой на макушке
+        и зелёным экраном старого осциллографа. Пока вы говорите, по экрану бежит
+        волна голоса — догадываться, услышал ли микрофон, не нужно.
       </p>
       <p class="mt-4 text-ink-soft leading-relaxed">
-        Микрофон выбирается в настройках: встроенный, USB, Bluetooth или
+        Аватар можно утащить мышью в любое место любого монитора — он там и
+        останется. Фокус он не забирает: текст вставляется туда, где стоит курсор.
+        Мешает, например, при записи экрана — выключается одной галочкой в настройках.
+      </p>
+      <p class="mt-4 text-ink-soft leading-relaxed">
+        Микрофон выбирается там же: встроенный, USB, Bluetooth или
         виртуальный вход. Выбор действует только для Nota — системный вход
         macOS остаётся прежним. А если микрофон отключится посреди фразы,
         запись отменится с понятной ошибкой и обрывок не вставится.
       </p>
 
-      <div class="mt-8 rounded-3xl bg-coral-soft border border-coral/20 p-6">
-        <p class="font-mono text-xs text-coral tracking-wide">ЗАМЕР, А НЕ НА ГЛАЗ</p>
+      <div class="mt-8 rounded-3xl bg-mint-soft border border-mint/20 p-6">
+        <p class="font-mono text-xs text-mint tracking-wide">ВИСИТ ВЕСЬ ДЕНЬ</p>
         <p class="mt-2.5 text-ink leading-relaxed">
-          Когда пик диктовки падает ниже <span class="font-mono font-medium">−26&nbsp;дБФС</span>,
-          whisper начинает терять термины. Подсказка «тихо, говорите громче»
-          загорается ровно на этом пороге — он получен замером, а не выбран
-          на глаз.
+          В ожидании аватар почти не тратит батарею: картинка обновляется, только
+          когда он моргает. Кадры идут непрерывно лишь пока вы говорите и пока
+          фраза распознаётся.
         </p>
       </div>
-
-      <ul class="mt-8 space-y-3.5 text-ink-soft">
-        <li class="flex items-start gap-3">
-          <span class="mt-1.5 w-2 h-2 rounded-full bg-mint shrink-0"></span>
-          <span><span class="text-ink font-medium">Зелёная часть шкалы</span> — обычная речь. Здесь полоса живёт почти всё время.</span>
-        </li>
-        <li class="flex items-start gap-3">
-          <span class="mt-1.5 w-2 h-2 rounded-full bg-amber shrink-0"></span>
-          <span><span class="text-ink font-medium">Жёлтая</span> — громко, до перегруза остаётся немного.</span>
-        </li>
-        <li class="flex items-start gap-3">
-          <span class="mt-1.5 w-2 h-2 rounded-full bg-coral shrink-0"></span>
-          <span><span class="text-ink font-medium">Красная</span> — перегруз: звук обрезается, и распознавание портится. В норме туда не заходят.</span>
-        </li>
-        <li class="flex items-start gap-3">
-          <span class="mt-1.5 w-2 h-2 rounded-full bg-violet shrink-0"></span>
-          <span><span class="text-ink font-medium">Слишком тихо</span> — цветом не показывается: полоса просто короткая. Об этом приложение предупреждает текстом.</span>
-        </li>
-      </ul>
     </div>
 
     <div class="reveal order-1 lg:order-2 relative">
-      <div class="rounded-5xl bg-card border border-line/70 shadow-soft p-8 sm:p-10">
-        <div class="flex items-end gap-6">
-          <!-- шкала дБФС -->
-          <div class="flex flex-col items-center gap-2 shrink-0">
-            <span class="font-mono text-[11px] text-ink-faint">0</span>
-            <div class="relative w-9 h-64 rounded-full dbfs-scale overflow-hidden shadow-inner">
-              <div class="dbfs-peak absolute left-0 right-0 h-[3px] bg-ink/80" style="bottom:60%"></div>
-            </div>
-            <span class="font-mono text-[11px] text-ink-faint">−40</span>
-          </div>
-
-          <div class="flex-1">
-            <p class="font-mono text-xs text-ink-faint">УРОВЕНЬ ЗАПИСИ</p>
-            <p class="mt-2 font-display text-2xl">−18&nbsp;дБФС</p>
-            <p class="mt-1 text-sm text-ink-soft">пик держится в зелёной зоне</p>
-
-            <div class="mt-6 space-y-3 font-mono text-xs">
-              <div class="flex items-center justify-between rounded-xl bg-amber-soft px-3.5 py-2.5">
-                <span class="text-ink-soft">громко</span>
-                <span class="text-ink-faint">−6…0</span>
-              </div>
-              <div class="flex items-center justify-between rounded-xl bg-mint-soft px-3.5 py-2.5">
-                <span class="text-ink-soft">то, что нужно</span>
-                <span class="text-ink-faint">−26…−6</span>
-              </div>
-              <div class="flex items-center justify-between rounded-xl bg-coral-soft px-3.5 py-2.5">
-                <span class="text-ink-soft">тихо, говорите громче</span>
-                <span class="text-ink-faint">−40…−26</span>
-              </div>
-            </div>
-          </div>
+      <div class="rounded-5xl bg-card border border-line/70 shadow-soft p-6 sm:p-8">
+        <div class="rounded-4xl avatar-stage grid place-items-center py-10">
+          <canvas id="avatar-demo" class="nota-avatar w-[190px] h-[190px] sm:w-[228px] sm:h-[228px]"
+                  role="img" aria-label="Аватар Nota проходит по очереди все состояния"></canvas>
         </div>
+        <ul id="avatar-states" class="mt-5 grid gap-1 text-sm">
+          <li><button type="button" data-state="idle" class="avatar-state"><b>ожидание</b><span>моргает и иногда косится в сторону</span></button></li>
+          <li><button type="button" data-state="connecting" class="avatar-state"><b>микрофон</b><span>оглядывается, пока микрофон просыпается</span></button></li>
+          <li><button type="button" data-state="listening" class="avatar-state"><b>слушает</b><span>волна в такт голосу</span></button></li>
+          <li><button type="button" data-state="transcribing" class="avatar-state"><b>распознаёт</b><span>бегает огонёк</span></button></li>
+          <li><button type="button" data-state="done" class="avatar-state"><b>готово</b><span>галочка — текст уже в окне</span></button></li>
+          <li><button type="button" data-state="error" class="avatar-state"><b>ошибка</b><span>экран краснеет, причина — у значка в менюбаре</span></button></li>
+        </ul>
+        <p class="mt-3 font-mono text-[11px] text-ink-faint">Нажмите на состояние, чтобы задержаться на нём; <button type="button" id="avatar-cycle" class="underline decoration-line hover:text-ink">по кругу</button> — снова все подряд.</p>
       </div>
     </div>
   </div>
@@ -720,6 +680,7 @@
   <button type="button" class="lightbox-btn lightbox-next" aria-label="Следующий снимок">›</button>
   <button type="button" class="lightbox-btn lightbox-close" aria-label="Закрыть">×</button>
 </div>
-<script src="js/main.js?v=e8292970"></script>
+<script src="js/avatar.js?v=d6e1727f"></script>
+<script src="js/main.js?v=bd6ac003"></script>
 </body>
 </html>

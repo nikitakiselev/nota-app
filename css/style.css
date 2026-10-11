@@ -141,6 +141,29 @@ body {
 .avatar-state:hover {
   background: rgb(var(--bg-alt));
 }
+/* Вкладки прячут списки атрибутом hidden, а `grid` из Tailwind его перебивает. */
+#avatar [data-panel][hidden] {
+  display: none;
+}
+.avatar-tabs {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 0.9rem;
+  background: rgb(var(--bg-alt));
+}
+.avatar-tab {
+  padding: 0.35rem 0.85rem;
+  border-radius: 0.7rem;
+  font-size: 0.8125rem;
+  color: rgb(var(--ink-soft));
+  transition: background-color 0.2s, color 0.2s;
+}
+.avatar-tab.is-current {
+  background: rgb(var(--card));
+  color: rgb(var(--ink));
+  box-shadow: 0 1px 2px rgb(var(--ink) / 0.08);
+}
 .avatar-state.is-current {
   background: rgb(var(--mint-soft));
   color: rgb(var(--ink));

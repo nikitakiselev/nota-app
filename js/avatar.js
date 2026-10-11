@@ -1,7 +1,7 @@
 // Nota — пиксельный аватар для лендинга.
 // Та же картинка, что в приложении: карта корпуса и рисунки экрана — из
-// AvatarSprite.swift и AvatarScreen.swift в nota-macos. Голос здесь
-// имитируется: микрофон странице не нужен.
+// AvatarSprite.swift, AvatarScreen.swift и AvatarReactionScreen.swift в
+// nota-macos. Голос здесь имитируется: микрофон странице не нужен.
 
 (function () {
   "use strict";
@@ -94,6 +94,254 @@
     return data;
   })();
 
+  // Экран 16×12: накал каждой точки. Фигуры записаны строками, как карта
+  // корпуса: «.» пусто, «+» dim, «#» core, «@» bright.
+  var INK_OF = { "+": 2, "#": 3, "@": 4 };
+  function Ink() { this.v = new Uint8Array(SW * SH); }
+  Ink.prototype.set = function (x, y, v) {
+    x = Math.round(x); y = Math.round(y);
+    if (x < 0 || y < 0 || x >= SW || y >= SH || isCorner(x, y)) return;
+    this.v[y * SW + x] = v;
+  };
+  Ink.prototype.rect = function (x, y, w, h, v) {
+    for (var j = 0; j < h; j++) for (var i = 0; i < w; i++) this.set(x + i, y + j, v);
+  };
+  Ink.prototype.glyph = function (rows, x, y) {
+    for (var j = 0; j < rows.length; j++) for (var i = 0; i < rows[j].length; i++) {
+      var v = INK_OF[rows[j][i]];
+      if (v) this.set(x + i, y + j, v);
+    }
+  };
+  // Глаза 2×2; open: 2 открыт, 1 прикрыт, 0 закрыт — прикрытый и закрытый одна строка.
+  Ink.prototype.eye = function (left, open, dx, dy) {
+    dx = dx || 0; dy = dy || 0;
+    if (open === 2) { this.rect(left + dx, 4 + dy, 2, 1, 4); this.rect(left + dx, 5 + dy, 2, 1, 3); }
+    else this.rect(left + dx, 5 + dy, 2, 1, 3);
+  };
+  Ink.prototype.eyes = function (open, dx, dy) { this.eye(3, open, dx, dy); this.eye(11, open, dx, dy); };
+  Ink.prototype.shift = function (dx) {
+    var src = this.v.slice();
+    this.v = new Uint8Array(SW * SH);
+    for (var y = 0; y < SH; y++) for (var x = 0; x < SW; x++) if (src[y * SW + x]) this.set(x + dx, y, src[y * SW + x]);
+  };
+  Ink.prototype.shiftRow = function (y, dx) {
+    var row = this.v.slice(y * SW, y * SW + SW);
+    for (var x = 0; x < SW; x++) this.v[y * SW + x] = 0;
+    for (x = 0; x < SW; x++) if (row[x]) this.set(x + dx, y, row[x]);
+  };
+  Ink.prototype.noise = function (frame, density, inks) {
+    for (var i = 0; i < SW * SH; i++) {
+      if (hash(frame * 1013 + i) < density) this.set(i % SW, Math.floor(i / SW), inks[Math.floor(hash(frame * 7919 + i * 31 + 5) * inks.length)]);
+    }
+  };
+  // Ореол люминофора вокруг горящих точек.
+  Ink.prototype.glow = function () {
+    var lit = this.v.slice();
+    for (var y = 0; y < SH; y++) for (var x = 0; x < SW; x++) {
+      if (lit[y * SW + x]) continue;
+      if ((x > 0 && lit[y * SW + x - 1]) || (x < SW - 1 && lit[y * SW + x + 1]) ||
+          (y > 0 && lit[(y - 1) * SW + x]) || (y < SH - 1 && lit[(y + 1) * SW + x])) this.set(x, y, 1);
+    }
+  };
+
+  function hash(n) {
+    var x = Math.imul(n ^ 0x9e3779b9, 0x85ebca6b);
+    x ^= x >>> 13; x = Math.imul(x, 0xc2b2ae35); x ^= x >>> 16;
+    return (x >>> 0) / 4294967296;
+  }
+  function step(t, dt) { return Math.floor(t / dt); }
+  function jitter(t, dt) { return step(t, dt) % 2 ? 1 : -1; }
+  function g(s) { return s.split(" "); }
+
+  var EYE_ARC = g(".@@. @..@"), EYE_ARC_S = g(".@. @.@");
+  var SQUINT_L = g("#.. .#. ..@ .#. #.."), SQUINT_R = g("..# .#. @.. .#. ..#");
+  var RING = g(".@@. #..# #..# .++."), BIG = g(".@@. @@## #### .++.");
+  var SMILE = g("#..# .##."), GRIN = g("#....# .####."), MOUTH_O = g(".##. #..# .##.");
+  var MOUTH_OPEN = g("@@@@@@ .####."), FROWN = g(".##. #..#");
+  var WAVY_A = g("+.+.+. .+.+.+"), WAVY_B = g(".+.+.+ +.+.+.");
+  var HEART_B = g(".@.@. ##### .###. ..#.."), HEART_S = g("#.# ### .#.");
+  var ZED = g("### ..# .#. ###"), ZED_DIM = g("+++ ..+ .+. +++");
+  var NOTE = g(".@@ .#. ##. ##."), NOTE_DIM = g(".++ .+. ++. ++.");
+  var BLUSH = g(".+.+ +.+.");
+  var ORBIT = [[0, -1], [1, -1], [1, 0], [1, 1], [0, 1], [-1, 1], [-1, 0], [-1, -1]];
+
+  // Реакции — рисунки и длительности из AvatarReactionScreen.swift. dur у тех,
+  // что в приложении держатся (пока тащат, пока спит), — сколько их показывать
+  // по кнопке; peak — кадр без анимации для prefers-reduced-motion.
+  var REACTIONS = {
+    wink: { dur: 1.0, peak: 0.4, draw: function (S, t) {
+      S.eye(3, 2);
+      if (t < 0.06 || (t >= 0.7 && t < 0.78)) S.eye(11, 1);
+      else if (t < 0.7) S.glyph(EYE_ARC, 10, 4);
+      else S.eye(11, 2);
+      if (t >= 0.06 && t < 0.85) S.glyph(SMILE, 6, 8);
+      else if (t >= 0.85) S.glyph(g("+..+ .++."), 6, 8);
+    } },
+    smile: { dur: 1.6, peak: 0.6, draw: function (S, t) {
+      if (t < 0.08 || (t >= 1.4 && t < 1.48)) return S.eyes(1);
+      if (t >= 1.48) return S.eyes(2);
+      S.glyph(EYE_ARC, 2, 4); S.glyph(EYE_ARC, 10, 4);
+      if (t < 0.16) S.glyph(SMILE, 6, 8); else S.glyph(GRIN, 5, 8);
+    } },
+    stars: { dur: 1.6, peak: 0.2, draw: function (S, t) {
+      if (t >= 1.4) return S.eyes(t < 1.48 ? 1 : 2);
+      var big = step(t, 0.15) % 2 === 0;
+      [4, 11].forEach(function (cx) {
+        S.set(cx, 4, 4);
+        [[1, 0], [-1, 0], [0, 1], [0, -1]].forEach(function (d) {
+          S.set(cx + d[0], 4 + d[1], 3);
+          if (big) S.set(cx + 2 * d[0], 4 + 2 * d[1], 2);
+        });
+        if (!big) [[1, 1], [-1, 1], [1, -1], [-1, -1]].forEach(function (d) { S.set(cx + d[0], 4 + d[1], 2); });
+      });
+      S.glyph(g("@@@@ .##."), 6, 8);
+    } },
+    poke: { dur: 0.9, peak: 0.25, draw: function (S, t) {
+      if (t < 0.06) return S.eyes(2, 0, -1);
+      if (t < 0.62) {
+        S.glyph(SQUINT_L, 2, 2); S.glyph(SQUINT_R, 11, 2); S.rect(7, 9, 2, 1, 3);
+        if (t < 0.3) S.shift(jitter(t, 0.04));
+        return;
+      }
+      S.eyes(t < 0.7 ? 1 : 2);
+    } },
+    hearts: { dur: 1.8, peak: 0.05, draw: function (S, t) {
+      if (t >= 1.7) return S.eyes(t < 1.76 ? 1 : 2);
+      var u = t % 0.6;
+      if (u < 0.12 || (u >= 0.2 && u < 0.32)) { S.glyph(HEART_B, 1, 3); S.glyph(HEART_B, 10, 3); }
+      else { S.glyph(HEART_S, 2, 4); S.glyph(HEART_S, 11, 4); }
+      S.glyph(SMILE, 6, 8);
+    } },
+    scared: { dur: 1.8, peak: 0.6, draw: function (S, t) {
+      if (t < 0.06) return S.eyes(2, 0, -1);
+      S.glyph(RING, 2, 3); S.glyph(RING, 10, 3);
+      var p = Math.floor(hash(step(t, 0.22) + 17) * 4);
+      S.set(3 + p % 2, 4 + (p >> 1), 4); S.set(11 + p % 2, 4 + (p >> 1), 4);
+      S.glyph(MOUTH_O, 6, 8);
+    } },
+    wheee: { dur: 1.8, peak: 0.5, draw: function (S, t) {
+      [[1, 0], [2, 11], [10, 5]].forEach(function (l) {
+        var x = 15 - Math.floor((t * 26 + l[1]) % 22);
+        S.set(x, l[0], 3); S.rect(x + 1, l[0], 3, 1, 2);
+      });
+      S.glyph(EYE_ARC, 2, 4); S.glyph(EYE_ARC, 10, 4); S.glyph(MOUTH_OPEN, 5, 8);
+    } },
+    glitch: { dur: 0.9, peak: 0.25, draw: function (S, t) {
+      if (t < 0.12) { S.eyes(2); S.shiftRow(4, 3); S.shiftRow(5, -2); return; }
+      if (t < 0.45) { S.noise(step(t, 0.04), 0.35, [1, 2, 2, 3]); S.rect(0, step(t - 0.12, 0.03) % SH, SW, 1, 4); return; }
+      if (t < 0.55) return S.rect(0, 5, SW, 2, 3);
+      S.eyes(2);
+    }, flicker: function (t) { return t >= 0.6 && t < 0.66; } },
+    dizzy: { dur: 2.2, peak: 0.5, draw: function (S, t) {
+      if (t >= 2.0) return S.eyes(t < 2.08 ? 1 : 2);
+      var s = Math.floor(16 * t - 3 * t * t);
+      [[4, 1], [11, -1]].forEach(function (c) {
+        ORBIT.forEach(function (d) { S.set(c[0] + d[0], 4 + d[1], 2); });
+        for (var k = 2; k >= 0; k--) {
+          var d = ORBIT[((c[1] * (s - k)) % 8 + 8) % 8];
+          S.set(c[0] + d[0], 4 + d[1], k === 0 ? 4 : 3);
+        }
+      });
+      S.glyph(step(t, 0.2) % 2 ? WAVY_A : WAVY_B, 5, 8);
+    }, body: function (t) { return t < 2 ? [Math.round(1.4 * Math.sin(t * 7) * (1 - t / 2)), 0] : [0, 0]; } },
+    relief: { dur: 1.4, peak: 0.4, draw: function (S, t) {
+      S.eyes(t < 0.6 ? 0 : t < 0.68 ? 1 : 2);
+      if (t >= 0.1 && t < 0.6) S.glyph(g(".#. #.# .#."), 6, 8);
+      if (t >= 0.2 && t < 0.9) {
+        var u = (t - 0.2) / 0.7, x = 10 + Math.round(u * 4), y = 9 - Math.round(u * 3), v = u < 0.5 ? 2 : 1;
+        S.set(x, y, v); S.set(x + 1, y, v); S.set(x, y - 1, v);
+      }
+      if (t >= 0.75 && t < 1.3) S.glyph(SMILE, 6, 8);
+    } },
+    squint: { dur: 2.0, peak: 0.8, draw: function (S, t, face) {
+      if (t < 0.15 || t >= 1.85) return S.eyes(face.open);
+      var dx = t < 1.15 ? -1 : t < 1.45 ? 1 : -1;
+      S.rect(2 + dx, 4, 4, 1, 2); S.rect(3 + dx, 5, 2, 1, 3);
+      S.eye(11, 2, dx); S.glyph(g(".++. +..+"), 10 + dx, 1);
+      S.rect(8, 9, 3, 1, 2);
+    } },
+    annoyed: { dur: 2.0, peak: 1.2, draw: function (S, t) {
+      if (t < 0.08 || (t >= 1.9 && t < 1.98)) return S.eyes(1);
+      if (t >= 1.98) return S.eyes(2);
+      var dx = t < 0.6 ? 0 : -1, dy = t >= 1.0 && t < 1.5 ? 1 : 0;
+      S.rect(2 + dx, 5 + dy, 4, 1, 3); S.rect(10 + dx, 5 + dy, 4, 1, 3);
+      S.rect(6 + dx, 9 + dy, 4, 1, 2);
+      if (t >= 0.6) { S.set(14, 1, 2); S.set(14, 2, 3); }
+    } },
+    angry: { dur: 1.8, peak: 0.3, draw: function (S, t) {
+      if (t >= 1.6) return S.eyes(t < 1.68 ? 1 : 2);
+      S.glyph(g("##.. ..##"), 2, 2); S.glyph(g("..## ##.."), 10, 2);
+      S.rect(3, 4, 2, 2, 3); S.rect(11, 4, 2, 2, 3);
+      S.glyph(FROWN, 6, 8);
+      if (t > 0.4 && t < 0.9) S.shift(jitter(t, 0.04));
+    } },
+    shy: { dur: 1.8, peak: 0.3, draw: function (S, t) {
+      if (t >= 1.6) return S.eyes(t < 1.68 ? 1 : 2);
+      var nervous = (t > 0.5 && t < 0.58) || (t > 0.7 && t < 0.78);
+      S.eyes(nervous ? 1 : 2, -2, 1);
+      S.glyph(BLUSH, 1, 8); S.glyph(BLUSH, 9, 8);
+      S.rect(5, 10, 2, 1, 2);
+    } },
+    yawn: { dur: 2.4, peak: 1.0, draw: function (S, t) {
+      var dy = t >= 0.5 && t < 1.4 ? -1 : 0, open = 2;
+      if (t >= 0.3 && t < 1.7) open = 0;
+      else if ((t >= 1.95 && t < 2.03) || (t >= 2.13 && t < 2.21)) open = 1;
+      S.eyes(open, 0, dy);
+      if ((t >= 0.2 && t < 0.5) || (t >= 1.4 && t < 1.6)) S.glyph(MOUTH_O, 6, 8);
+      else if (t >= 0.5 && t < 1.4) S.glyph(g(".####. #....# #....# .####."), 5, 7 + dy);
+    } },
+    hum: { dur: 3.0, peak: 0.7, draw: function (S, t) {
+      [0.2, 1.3].forEach(function (start) {
+        if (t < start || t > start + 1.4) return;
+        var u = (t - start) / 1.4;
+        S.glyph(u < 0.6 ? NOTE : NOTE_DIM, 13, 8 - Math.round(u * 8));
+      });
+      if (t >= 2.7) return S.eyes(t < 2.78 ? 1 : 2);
+      var dx = step(t, 0.4) % 2 ? 0 : -1;
+      S.glyph(EYE_ARC_S, 2 + dx, 4); S.glyph(EYE_ARC_S, 10 + dx, 4);
+      S.glyph(step(t, 0.2) % 2 ? SMILE : g(".##. .##."), 5 + dx, 8);
+    } },
+    sneeze: { dur: 2.0, peak: 1.05, draw: function (S, t) {
+      if (t < 0.9) {
+        S.eyes(t < 0.6 ? 2 : 1, 0, t < 0.3 ? 0 : -1);
+        if (t >= 0.6) S.glyph(MOUTH_O, 6, 7); else if (t >= 0.3) S.rect(7, 8, 2, 1, 3);
+        return;
+      }
+      if (t < 1.0) { S.glyph(SQUINT_L, 2, 1); S.glyph(SQUINT_R, 11, 1); return; }
+      if (t < 1.15) return S.noise(step(t, 0.03), 0.45, [2, 3, 4]);
+      S.eyes(t < 1.6 || (t >= 1.75 && t < 1.83) ? 0 : 2);
+      if (t < 1.6) S.rect(7, 9, 2, 1, 2);
+    }, body: function (t) { return t >= 1.0 && t < 1.15 ? [-1, 2] : t >= 1.15 && t < 1.25 ? [0, 1] : [0, 0]; } },
+    sleep: { dur: 3.4, peak: 1.6, wakes: true, draw: function (S, t) {
+      var dy = t < 0.3 ? 0 : t < 0.6 ? 1 : 2, dx = t < 0.6 ? 0 : -2;
+      var breath = t < 0.6 || step(t - 0.6, 1.2) % 2 ? 3 : 2;
+      S.rect(3 + dx, 5 + dy, 2, 1, breath); S.rect(11 + dx, 5 + dy, 2, 1, breath);
+      if (t < 0.6) return;
+      S.rect(5, 10, 2, 1, 2);
+      var u = ((t - 0.6) % 1.4) / 1.4;
+      S.glyph(u < 0.6 ? ZED : ZED_DIM, 12, 3 - Math.round(u * 3));
+    } },
+    // Пробуждение: глаза на миг распахиваются.
+    wake: { dur: 0.4, peak: 0.05, draw: function (S, t) {
+      if (t < 0.15) { S.glyph(BIG, 2, 3); S.glyph(BIG, 10, 3); } else S.eyes(2, 0, t < 0.25 ? -1 : 0);
+    } },
+    powerOn: { dur: 1.3, peak: 0.3, draw: function (S, t) {
+      if (t < 0.15) return;
+      if (t < 0.35) { var w = 1 + Math.round((t - 0.15) / 0.2 * 7); return S.rect(8 - w, 5, 2 * w, 2, 4); }
+      if (t < 0.5) { var h = 1 + Math.round((t - 0.35) / 0.15 * 5); S.rect(0, 6 - h, SW, 2 * h, 3); return S.rect(0, 5, SW, 2, 4); }
+      if (t < 0.65) return S.rect(0, 0, SW, SH, t < 0.57 ? 2 : 1);
+      if (t < 0.8) { S.rect(3, 5, 2, 1, 2); return S.rect(11, 5, 2, 1, 2); }
+      S.eyes(t < 0.88 || (t >= 1.1 && t < 1.16) ? 1 : 2);
+    } },
+    powerOff: { dur: 1.0, peak: 0.45, draw: function (S, t) {
+      if (t < 0.1) return S.eyes(2);
+      if (t < 0.2) { S.rect(0, 0, SW, SH, 3); return S.rect(0, 4, SW, 4, 4); }
+      if (t < 0.4) { var h = Math.max(1, Math.round(6 * (1 - (t - 0.2) / 0.2))); return S.rect(0, 6 - h, SW, 2 * h, 4); }
+      if (t < 0.6) { var w = Math.max(1, Math.round(8 * (1 - (t - 0.4) / 0.2))); return S.rect(8 - w, 5, 2 * w, 2, 4); }
+      if (t < 0.85) { var u = (t - 0.6) / 0.25; S.rect(7, 5, 2, 2, u < 0.33 ? 4 : u < 0.66 ? 3 : 2); }
+    } }
+  };
+
   function NotaAvatar(canvas, options) {
     this.canvas = canvas;
     this.onState = options && options.onState;
@@ -110,6 +358,8 @@
     this.glanceDx = 0;
     this.flickerAt = 4 + Math.random() * 2;
     this.visible = true;
+    // Реакция поверх ожидания: { id, start, hold }.
+    this.reaction = null;
 
     this.low = document.createElement("canvas");
     this.low.width = this.low.height = SIZE;
@@ -164,6 +414,24 @@
     requestAnimationFrame(frame);
   };
 
+  // Реакция на мышь или простой. hold — держится, пока не вызовут release()
+  // (перетаскивание, сон); иначе идёт свою длительность.
+  NotaAvatar.prototype.react = function (id, hold) {
+    this.reaction = { id: id, start: this.now(), hold: !!hold };
+    if (reduceMotion) this.draw();
+  };
+
+  // Отпустили или разбудили: держащаяся реакция кончается, спящий просыпается.
+  NotaAvatar.prototype.release = function () {
+    var r = this.reaction;
+    if (!r || !r.hold) return;
+    this.reaction = REACTIONS[r.id].wakes ? { id: "wake", start: this.now(), hold: false } : null;
+    if (reduceMotion) this.draw();
+  };
+
+  NotaAvatar.prototype.isPlaying = function () { return this.reaction !== null; };
+  NotaAvatar.prototype.isAsleep = function () { return !!this.reaction && this.reaction.id === "sleep"; };
+
   NotaAvatar.prototype.face = function (t) {
     if (t >= this.blinkAt + 0.16) this.blinkAt = t + 2.2 + Math.random() * 3.6;
     var d = t - this.blinkAt;
@@ -196,23 +464,24 @@
     var level = Math.max(0, Math.min(1, (this.level + 50) / 44));
     var face = reduceMotion ? { open: 2, glance: 0, flicker: false } : this.face(t);
 
-    var ink = new Uint8Array(SW * SH);
-    function set(x, y, v) {
-      x = Math.round(x); y = Math.round(y);
-      if (x < 0 || y < 0 || x >= SW || y >= SH || isCorner(x, y)) return;
-      ink[y * SW + x] = v;
-    }
-    function rect(x, y, w, h, v) {
-      for (var j = 0; j < h; j++) for (var i = 0; i < w; i++) set(x + i, y + j, v);
-    }
-    function eyes(shift) {
-      [3, 11].forEach(function (left) {
-        if (face.open === 2) { rect(left + shift, 4, 2, 1, 4); rect(left + shift, 5, 2, 1, 3); }
-        else rect(left + shift, 5, 2, 1, 3);
-      });
+    var S = new Ink();
+    function set(x, y, v) { S.set(x, y, v); }
+    function rect(x, y, w, h, v) { S.rect(x, y, w, h, v); }
+    function eyes(shift) { S.eyes(face.open, shift); }
+
+    // Реакция кончилась по времени: держащиеся (перетаскивание, сон) ждут release().
+    var r = this.reaction, reaction = null, rt = 0;
+    if (r) {
+      rt = reduceMotion ? REACTIONS[r.id].peak : t - r.start;
+      if (!r.hold && rt >= REACTIONS[r.id].dur) {
+        this.reaction = REACTIONS[r.id].wakes ? { id: "wake", start: t, hold: false } : null;
+        r = this.reaction; rt = 0;
+      }
+      if (r) reaction = REACTIONS[r.id];
     }
 
-    switch (state) {
+    if (reaction) reaction.draw(S, rt, face);
+    else switch (state) {
       case "idle": eyes(face.glance); break;
       case "connecting": eyes([-2, 0, 2, 0][Math.floor(sT / 0.4) % 4]); break;
       case "listening": {
@@ -242,15 +511,13 @@
         break;
     }
 
-    // Ореол люминофора вокруг горящих точек.
-    var lit = ink.slice();
-    for (var gy = 0; gy < SH; gy++) for (var gx = 0; gx < SW; gx++) {
-      if (lit[gy * SW + gx]) continue;
-      if ((gx > 0 && lit[gy * SW + gx - 1]) || (gx < SW - 1 && lit[gy * SW + gx + 1]) ||
-          (gy > 0 && lit[(gy - 1) * SW + gx]) || (gy < SH - 1 && lit[(gy + 1) * SW + gx])) set(gx, gy, 1);
-    }
+    S.glow();
+    var ink = S.v;
 
-    var data = this.image.data, palette = state === "error" ? RED : GREEN, dim = face.flicker ? 0.55 : 1;
+    // Реакция всегда зелёная и без мерцания ожидания: своё мерцание есть только у помех.
+    var palette = !reaction && state === "error" ? RED : GREEN;
+    var flicker = reaction ? !!(reaction.flicker && reaction.flicker(rt)) : face.flicker;
+    var data = this.image.data, dim = flicker ? 0.55 : 1;
     data.set(body);
     for (var py = 0; py < SH; py++) for (var px = 0; px < SW; px++) {
       if (isCorner(px, py)) continue;
@@ -258,6 +525,15 @@
       data[k] = (c >> 16 & 255) * dim; data[k + 1] = (c >> 8 & 255) * dim; data[k + 2] = (c & 255) * dim;
     }
     this.lowCtx.putImageData(this.image, 0, 0);
+
+    // Покачивание и рывок корпуса: в приложении сдвигается окно, здесь — холст.
+    var off = reaction && reaction.body ? reaction.body(rt) : [0, 0];
+    var key = off[0] + "," + off[1];
+    if (key !== this.bodyKey) {
+      this.bodyKey = key;
+      var px = this.canvas.clientWidth / SIZE;
+      this.canvas.style.transform = off[0] || off[1] ? "translate(" + off[0] * px + "px," + off[1] * px + "px)" : "";
+    }
 
     var full = SIZE * this.scale * this.dpr, unit = this.scale * this.dpr;
     this.ctx.clearRect(0, 0, full, full);

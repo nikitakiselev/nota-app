@@ -187,6 +187,114 @@
       next();
     });
     if (reduceMotion) demo.setState("idle"); else next();
+
+    // Вкладки «Состояния» / «Реакции».
+    document.querySelectorAll("#avatar .avatar-tab").forEach(function (tab) {
+      tab.addEventListener("click", function () {
+        document.querySelectorAll("#avatar .avatar-tab").forEach(function (t) {
+          var on = t === tab;
+          t.classList.toggle("is-current", on);
+          t.setAttribute("aria-selected", on ? "true" : "false");
+        });
+        document.querySelectorAll("#avatar [data-panel]").forEach(function (panel) {
+          panel.hidden = panel.dataset.panel !== tab.dataset.tab;
+        });
+      });
+    });
+
+    // Реакции — как в приложении (AvatarGestures, AvatarReactionPicker): случайная
+    // из своего списка, но не та же, что в прошлый раз.
+    var TRIGGERS = {
+      click: ["wink", "smile", "stars"], dbl: ["poke", "hearts"], drag: ["scared", "wheee"],
+      drop: ["glitch", "dizzy", "relief"], hover: ["squint"], burst: ["annoyed", "angry", "shy"],
+      idle: ["yawn", "hum", "sneeze", "sleep"]
+    };
+    var lastPick = {};
+    function pick(trigger) {
+      var list = TRIGGERS[trigger];
+      var pool = list.length > 1 ? list.filter(function (id) { return id !== lastPick[trigger]; }) : list;
+      var id = pool[Math.floor(Math.random() * pool.length)];
+      lastPick[trigger] = id;
+      return id;
+    }
+    // В приложении реакции играют только в ожидании, поэтому прикосновение к
+    // аватару останавливает показ состояний.
+    function toIdle() {
+      clearTimeout(timer);
+      demo.keepDone = false;
+      demo.setState("idle");
+    }
+    function now() { return performance.now() / 1000; }
+
+    document.querySelectorAll("#avatar-reactions [data-trigger]").forEach(function (button) {
+      button.addEventListener("click", function () {
+        toIdle();
+        demo.react(pick(button.dataset.trigger));
+      });
+    });
+
+    var press = null, clicks = [], lastClick = -Infinity, hoverTimer = null;
+    function click() {
+      var t = now();
+      clicks = clicks.filter(function (c) { return t - c < 2.5; });
+      clicks.push(t);
+      if (clicks.length >= 5) { clicks = []; lastClick = -Infinity; demo.react(pick("burst")); return; }
+      if (t - lastClick < 0.4) { lastClick = -Infinity; demo.react(pick("dbl")); return; }
+      lastClick = t;
+      demo.react(pick("click"));
+    }
+    canvas.addEventListener("pointerdown", function (e) {
+      toIdle();
+      clearTimeout(hoverTimer);
+      var woke = demo.isAsleep();
+      if (woke) demo.release();
+      press = { id: e.pointerId, x: e.clientX, y: e.clientY, moved: false, at: 0, woke: woke };
+      canvas.setPointerCapture(e.pointerId);
+      canvas.style.transition = "none";
+    });
+    canvas.addEventListener("pointermove", function (e) {
+      if (!press || e.pointerId !== press.id) return;
+      var dx = e.clientX - press.x, dy = e.clientY - press.y;
+      if (!press.moved && Math.hypot(dx, dy) > 4) {
+        press.moved = true;
+        press.at = now();
+        canvas.classList.replace("cursor-grab", "cursor-grabbing");
+        demo.react(pick("drag"), true);
+      }
+      if (press.moved) {
+        // Тащится в пределах сцены и возвращается на место, когда отпустят.
+        var stage = canvas.parentElement.getBoundingClientRect(), box = canvas.getBoundingClientRect();
+        var mx = (stage.width - box.width) / 2, my = (stage.height - box.height) / 2;
+        canvas.style.translate = Math.max(-mx, Math.min(mx, dx)) + "px " + Math.max(-my, Math.min(my, dy)) + "px";
+      }
+    });
+    function up(e) {
+      if (!press || e.pointerId !== press.id) return;
+      var p = press;
+      press = null;
+      if (p.moved) {
+        demo.release();
+        canvas.classList.replace("cursor-grabbing", "cursor-grab");
+        canvas.style.transition = "translate 0.35s cubic-bezier(.2,.8,.2,1)";
+        canvas.style.translate = "";
+        // Короткий сдвиг — без представления, как в приложении.
+        if (now() - p.at >= 0.5) demo.react(pick("drop"));
+      } else if (!p.woke) {
+        click();
+      }
+    }
+    canvas.addEventListener("pointerup", up);
+    canvas.addEventListener("pointercancel", up);
+    // Курсор задержался на секунду — подозрение. Только когда аватар ничем
+    // не занят: проходящий мимо курсор не должен ломать показ состояний.
+    canvas.addEventListener("pointerenter", function (e) {
+      if (e.pointerType !== "mouse") return;
+      clearTimeout(hoverTimer);
+      hoverTimer = setTimeout(function () {
+        if (!press && demo.state === "idle" && !demo.isPlaying()) demo.react("squint");
+      }, 1000);
+    });
+    canvas.addEventListener("pointerleave", function () { clearTimeout(hoverTimer); });
   })();
 
   /* ---------------------------------------------------------------- */

@@ -1,0 +1,27 @@
+{
+  "fps": 24,
+  "frameWidth": 184,
+  "frameHeight": 224,
+  "rest": {
+    "frames": 1,
+    "sheet": "rest.png",
+    "screen": "rest-screen.bin"
+  },
+  "clips": {
+    "jump": {
+      "frames": 41,
+      "sheet": "jump.png",
+      "screen": "jump-screen.bin"
+    },
+    "spin": {
+      "frames": 41,
+      "sheet": "spin.png",
+      "screen": "spin-screen.bin"
+    },
+    "dance": {
+      "frames": 72,
+      "sheet": "dance.png",
+      "screen": "dance-screen.bin"
+    }
+  }
+}

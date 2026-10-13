@@ -60,7 +60,7 @@
   };
 </script>
 
-<link rel="stylesheet" href="css/style.css?v=a15103c9" />
+<link rel="stylesheet" href="css/style.css?v=a027381a" />
 </head>
 <body class="bg-bg text-ink font-sans antialiased selection:bg-violet selection:text-white">
 
@@ -189,8 +189,8 @@
           </div>
 
           <!-- аватар Nota: слушает, распознаёт, ставит галочку в такт печатающемуся тексту -->
-          <canvas id="hero-avatar" class="nota-avatar absolute top-12 right-3 w-[76px] h-[76px] sm:w-[114px] sm:h-[114px]"
-                  role="img" aria-label="Пиксельный аватар Nota: короб с нотой и экраном-осциллографом"></canvas>
+          <canvas id="hero-avatar" class="absolute top-11 right-3 w-[92px] h-[112px] sm:w-[115px] sm:h-[140px]"
+                  role="img" aria-label="Аватар Nota: телевизор с нотой на макушке и экраном-осциллографом"></canvas>
 
           <!-- «текстовое поле» с печатающейся коррекцией -->
           <div class="absolute left-4 right-4 bottom-4 rounded-2xl bg-ink/95 text-white/90 px-4 py-3.5 font-mono text-[13px] sm:text-sm shadow-lg min-h-[3.2rem] flex items-center">
@@ -444,7 +444,7 @@
 
         <div class="swiper-slide">
           <figure class="flex flex-col items-center gap-3.5">
-            <img src="assets/screenshots/settings-general@2x.png?v=290868e3" alt="Настройки Nota, вкладка «Основные»: клавиша диктовки, язык, аватар, автозапуск, диагностический лог, детектор речи, версия" class="h-[clamp(230px,30vw,440px)] w-auto max-w-[78vw] cursor-zoom-in" />
+            <img src="assets/screenshots/settings-general@2x.png?v=c21ce5ce" alt="Настройки Nota, вкладка «Основные»: клавиша диктовки, язык, аватар, автозапуск, диагностический лог, детектор речи, версия" class="h-[clamp(230px,30vw,440px)] w-auto max-w-[78vw] cursor-zoom-in" />
             <figcaption class="font-mono text-xs text-ink-soft text-center max-w-[32ch] leading-relaxed">Основные — клавиша, язык, аватар, детектор речи</figcaption>
           </figure>
         </div>
@@ -487,7 +487,7 @@
         <div class="swiper-slide">
           <figure class="flex flex-col items-center gap-3.5">
             <div class="h-[clamp(230px,30vw,440px)] flex items-center">
-              <img src="assets/screenshots/avatar@2x.png?v=bf66c946" alt="Аватар Nota на рабочем столе: короб с нотой на макушке, на зелёном экране — глаза" class="nota-avatar h-[122px] sm:h-[244px] w-auto max-w-[78vw] cursor-zoom-in" />
+              <img src="assets/screenshots/avatar@2x.png?v=5e764ee4" alt="Аватар Nota на рабочем столе: телевизор с нотой на макушке, на зелёном экране — глаза" class="h-[158px] sm:h-[237px] w-auto max-w-[78vw] cursor-zoom-in" />
             </div>
             <figcaption class="font-mono text-xs text-ink-soft text-center max-w-[32ch] leading-relaxed">Аватар — висит на экране, моргает и слушает</figcaption>
           </figure>
@@ -512,20 +512,21 @@
         Видно, что Nota слушает, — ещё до конца фразы
       </h2>
       <p class="mt-5 text-lg text-ink-soft leading-relaxed">
-        На экране живёт маленький пиксельный персонаж: короб с нотой на макушке
-        и зелёным экраном старого осциллографа. Пока вы говорите, по экрану бежит
+        На экране живёт маленький объёмный персонаж: телевизор с нотой на макушке,
+        ручками, ножками и зелёным экраном старого осциллографа. Пока вы говорите, по экрану бежит
         волна голоса — догадываться, услышал ли микрофон, не нужно.
       </p>
       <p class="mt-4 text-ink-soft leading-relaxed">
         Аватар можно утащить мышью в любое место любого монитора — он там и
-        останется. Фокус он не забирает: текст вставляется туда, где стоит курсор.
+        останется. Фокус он не забирает: текст вставляется туда, где стоит курсор,
+        а клик по пустому месту рядом с ним попадает в окно под ним.
         Мешает, например, при записи экрана — выключается одной галочкой в настройках.
       </p>
       <p class="mt-4 text-ink-soft leading-relaxed">
-        А ещё он живой. На клик подмигивает или улыбается, на двойной — смотрит
-        сердечками, пока его тащат — пугается, а после долгого полёта у него
-        кружится голова. Если долго не диктовать, зевает, напевает и через
-        полчаса засыпает; будит его клик или клавиша диктовки.
+        А ещё он живой. На клик подмигивает или улыбается, на двойной — подпрыгивает,
+        пока его тащат — пугается, а после долгого полёта делает пируэт, и у него
+        кружится голова. Если долго не диктовать, зевает, пританцовывает под свою
+        песенку и через полчаса засыпает; будит его клик или клавиша диктовки.
       </p>
       <p class="mt-4 text-ink-soft leading-relaxed">
         Микрофон выбирается там же: встроенный, USB, Bluetooth или
@@ -549,7 +550,7 @@
     <div class="reveal order-1 lg:order-2 relative">
       <div class="rounded-5xl bg-card border border-line/70 shadow-soft p-6 sm:p-8">
         <div class="rounded-4xl avatar-stage grid place-items-center py-10">
-          <canvas id="avatar-demo" class="nota-avatar w-[190px] h-[190px] sm:w-[228px] sm:h-[228px] cursor-grab touch-none select-none"
+          <canvas id="avatar-demo" class="w-[184px] h-[224px] sm:w-[230px] sm:h-[280px] cursor-grab touch-none select-none"
                   role="img" aria-label="Аватар Nota: проходит по очереди все состояния, отвечает на клик, перетаскивание и курсор"></canvas>
         </div>
         <div class="avatar-tabs mt-5" role="tablist" aria-label="Что показать">
@@ -567,12 +568,12 @@
         <p class="mt-3 font-mono text-[11px] text-ink-faint" data-panel="states">Нажмите на состояние, чтобы задержаться на нём; <button type="button" id="avatar-cycle" class="underline decoration-line hover:text-ink">по кругу</button> — снова все подряд.</p>
         <ul id="avatar-reactions" class="mt-3 grid gap-1 text-sm" data-panel="reactions" hidden>
           <li><button type="button" data-trigger="click" class="avatar-state"><b>клик</b><span>подмигивает, улыбается или смотрит звёздочками</span></button></li>
-          <li><button type="button" data-trigger="dbl" class="avatar-state"><b>двойной клик</b><span>зажмуривается «ой!» или смотрит сердечками</span></button></li>
+          <li><button type="button" data-trigger="dbl" class="avatar-state"><b>двойной клик</b><span>подпрыгивает — зажмурившись «ой!» или с сердечками в глазах</span></button></li>
           <li><button type="button" data-trigger="drag" class="avatar-state"><b>тащат</b><span>пугается или радуется полёту</span></button></li>
-          <li><button type="button" data-trigger="drop" class="avatar-state"><b>отпустили</b><span>помехи, кружится голова или «уф»</span></button></li>
+          <li><button type="button" data-trigger="drop" class="avatar-state"><b>отпустили</b><span>помехи, пируэт с головокружением или «уф»</span></button></li>
           <li><button type="button" data-trigger="hover" class="avatar-state"><b>курсор</b><span>задержался на секунду — прищурится с подозрением</span></button></li>
           <li><button type="button" data-trigger="burst" class="avatar-state"><b>много кликов</b><span>пять подряд — «ну хватит», сердится или смущается</span></button></li>
-          <li><button type="button" data-trigger="idle" class="avatar-state"><b>простой</b><span>зевает, напевает, чихает, через полчаса засыпает</span></button></li>
+          <li><button type="button" data-trigger="idle" class="avatar-state"><b>простой</b><span>зевает, пританцовывает, чихает, через полчаса засыпает</span></button></li>
         </ul>
         <p class="mt-3 font-mono text-[11px] text-ink-faint" data-panel="reactions" hidden>Аватар выше настоящий: нажмите на него, нажмите дважды, потащите или наведите курсор и подождите.</p>
       </div>
@@ -702,7 +703,7 @@
   <button type="button" class="lightbox-btn lightbox-next" aria-label="Следующий снимок">›</button>
   <button type="button" class="lightbox-btn lightbox-close" aria-label="Закрыть">×</button>
 </div>
-<script src="js/avatar.js?v=12963b23"></script>
-<script src="js/main.js?v=19173518"></script>
+<script src="js/avatar.js?v=e0b41a57"></script>
+<script src="js/main.js?v=75a60b7a"></script>
 </body>
 </html>

@@ -163,6 +163,16 @@
         buttons.forEach(function (b) { b.classList.toggle("is-current", b.dataset.state === state); });
       }
     });
+    // Клипы тела (~4 МБ) грузятся, когда до раздела недалеко, а не вместе со
+    // страницей: шапке хватает кадра покоя.
+    if ("IntersectionObserver" in window && !reduceMotion) {
+      var near = new IntersectionObserver(function (entries) {
+        if (!entries[0].isIntersecting) return;
+        near.disconnect();
+        demo.preload();
+      }, { rootMargin: "800px 0px" });
+      near.observe(canvas);
+    }
     // Длительности — как в живой диктовке: подключение, фраза, ~1.5 с распознавания.
     var scenario = [["idle", 3.6], ["connecting", 1.6], ["listening", 4.6], ["transcribing", 1.7], ["done", 1.4]];
     var step = 0, timer = null;

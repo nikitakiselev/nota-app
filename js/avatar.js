@@ -1,58 +1,20 @@
-// Nota — пиксельный аватар для лендинга.
-// Та же картинка, что в приложении: карта корпуса и рисунки экрана — из
-// AvatarSprite.swift, AvatarScreen.swift и AvatarReactionScreen.swift в
-// nota-macos. Голос здесь имитируется: микрофон странице не нужен.
+// Nota — аватар для лендинга.
+// Та же картинка, что в приложении: тело — кадры 3D-рендера и карты экрана
+// из Resources/Avatar (Scripts/avatar/render.py в nota-macos), сборка кадра —
+// AvatarFrame.swift, рисунки экрана — AvatarScreen.swift и
+// AvatarReactionScreen.swift. Голос здесь имитируется: микрофон странице не нужен.
 
 (function () {
   "use strict";
 
-  var SIZE = 38;
-  var SX = 10, SY = 17, SW = 16, SH = 12; // экран на карте корпуса
-
-  var ROWS = [
-    "                        ######        ",
-    "                       #shhhhh#       ",
-    "                       #lmllllm#      ",
-    "                       #lmlmmmmd#     ",
-    "                       #lm##lmmmd#    ",
-    "                       #lm# #lmmmd#   ",
-    "                       #lm#  #lmmd#   ",
-    "                       #lm#   #lmd#   ",
-    "                       #lm#    #dd#   ",
-    "            ############lm########    ",
-    "           #sshhhhhhhhhhhhhhhhhh#     ",
-    "          #hlllllllllllllllllllhd#    ",
-    "         #hlllllllllllllllllllhdd#    ",
-    "        #hlllllllllllllllllllhddd#    ",
-    "       #hmmmmmmmmmmmmmmmmmmmhdddd#    ",
-    "      #hmmmmmmmmmmmmmmmmmmmmmdddd#    ",
-    "      #lmmbbbbbbbbbbbbbbbbmmmdddd#    ",
-    "      #lmbb..............bbmmdddd#    ",
-    "      #lmb................bmmdddd#    ",
-    "      #lmb................bmmdhld#    ",
-    "      #lmb................bmmdlmd###  ",
-    "      #lmb................bmmdddd#ll# ",
-    "      #lmb................bmmddddmmmd#",
-    "    ###lmb................bmmdhldmmmd#",
-    "   #sl#lmb................bmmdlmd#dd# ",
-    "  #lmmmlmb................bmmdddd###  ",
-    "  #lmmmlmb................bmmdddd#    ",
-    "   #dd#lmb................bmmddd#     ",
-    "    ###lmbb..............bbmmdd#      ",
-    "      #lmmbbbbbbbbbbbbbbbbmmmd#       ",
-    "      #lmmmmmmmmmmmmmmmmmmmmm#        ",
-    "       #dddddddddddddddddddd#         ",
-    "        ###md##########md###          ",
-    "          #md#        #md#            ",
-    "         #slll#      #slll#           ",
-    "        #mmmmmm#    #mmmmmm#          ",
-    "         #dddd#      #dddd#           ",
-    "          ####        ####            "
-  ];
-  var BODY = {
-    "#": 0x070d0f, d: 0x1b272c, m: 0x283a40, l: 0x3a5259,
-    h: 0x76a3a3, s: 0xc5ebe3, b: 0x0f1719, ".": 0x04110a
-  };
+  // Кадр тела в пикселях: окно 92×112 pt на Retina.
+  var W = 184, H = 224, FPS = 24;
+  var SW = 16, SH = 12; // экран
+  var BASE = "assets/avatar/";
+  // Клип тела у реакции — AvatarReaction.bodyClip.
+  var CLIPS = { poke: "jump", hearts: "jump", dizzy: "spin", hum: "dance" };
+  // Мерцание приглушает экран, строка развёртки гасит его — AvatarFrame.
+  var FLICKER = 0.55, SCANLINE = 0.68;
   var SCREEN = 0x04110a;
   // Накал: 1 ореол, 2 dim, 3 core, 4 bright.
   var GREEN = [SCREEN, 0x0c2c18, 0x1d6a3a, 0x46f283, 0xc4ffd8];
@@ -80,19 +42,6 @@
     var fine = noise(t * 23, 3);
     return noise(t * 0.9, 1) > 0.32 ? -34 + 20 * noise(t * 7, 2) + 4 * fine : -54 + 4 * fine;
   }
-
-  var body = (function () {
-    var data = new Uint8ClampedArray(SIZE * SIZE * 4);
-    ROWS.forEach(function (row, y) {
-      for (var x = 0; x < SIZE; x++) {
-        var c = BODY[row[x]];
-        if (c === undefined) continue;
-        var i = (y * SIZE + x) * 4;
-        data[i] = c >> 16 & 255; data[i + 1] = c >> 8 & 255; data[i + 2] = c & 255; data[i + 3] = 255;
-      }
-    });
-    return data;
-  })();
 
   // Экран 16×12: накал каждой точки. Фигуры записаны строками, как карта
   // корпуса: «.» пусто, «+» dim, «#» core, «@» bright.
@@ -243,7 +192,7 @@
         }
       });
       S.glyph(step(t, 0.2) % 2 ? WAVY_A : WAVY_B, 5, 8);
-    }, body: function (t) { return t < 2 ? [Math.round(1.4 * Math.sin(t * 7) * (1 - t / 2)), 0] : [0, 0]; } },
+    } },
     relief: { dur: 1.4, peak: 0.4, draw: function (S, t) {
       S.eyes(t < 0.6 ? 0 : t < 0.68 ? 1 : 2);
       if (t >= 0.1 && t < 0.6) S.glyph(g(".#. #.# .#."), 6, 8);
@@ -342,6 +291,70 @@
     } }
   };
 
+  // Тело: лист кадров подряд слева направо и карта экрана к каждому кадру.
+  // Покой нужен сразу, клипы — по требованию: вместе они весят ~4 МБ.
+  var manifest = null, sheets = {};
+
+  function fetchOk(url) {
+    return fetch(url).then(function (r) {
+      if (!r.ok) throw new Error(url + ": " + r.status);
+      return r;
+    });
+  }
+
+  // Лист в RGBA без премультипликации, как его отдаёт canvas.
+  function pixelsOf(url) {
+    return new Promise(function (resolve, reject) {
+      var img = new Image();
+      img.onload = function () {
+        var c = document.createElement("canvas");
+        c.width = img.naturalWidth; c.height = img.naturalHeight;
+        var ctx = c.getContext("2d", { willReadFrequently: true });
+        ctx.drawImage(img, 0, 0);
+        resolve(ctx.getImageData(0, 0, c.width, c.height));
+      };
+      img.onerror = function () { reject(new Error(url + ": не разобрать картинку")); };
+      img.src = url;
+    });
+  }
+
+  // Карта экрана: на кадр UInt32 — число записей, затем записи по 5 байт
+  // (UInt16 пиксель, точка, покрытие, строка развёртки), little-endian.
+  function parseMaps(buffer, frames, name) {
+    var view = new DataView(buffer), offset = 0, maps = [];
+    for (var f = 0; f < frames; f++) {
+      if (offset + 4 > buffer.byteLength) throw new Error(name + ": обрывается на кадре " + f);
+      var count = view.getUint32(offset, true);
+      offset += 4;
+      if (offset + count * 5 > buffer.byteLength) throw new Error(name + ": обрывается на кадре " + f);
+      maps.push(new Uint8Array(buffer, offset, count * 5));
+      offset += count * 5;
+    }
+    if (offset !== buffer.byteLength) throw new Error(name + ": лишние байты после " + frames + " кадров");
+    return maps;
+  }
+
+  function loadSheet(name) {
+    if (!manifest) manifest = fetchOk(BASE + "manifest.json").then(function (r) { return r.json(); });
+    if (!sheets[name]) {
+      sheets[name] = manifest.then(function (m) {
+        var entry = name === "rest" ? m.rest : m.clips[name];
+        return Promise.all([
+          pixelsOf(BASE + entry.sheet),
+          fetchOk(BASE + entry.screen).then(function (r) { return r.arrayBuffer(); })
+        ]).then(function (got) {
+          if (got[0].width !== W * entry.frames || got[0].height !== H) {
+            throw new Error(entry.sheet + ": лист " + got[0].width + "×" + got[0].height + ", ждём " + entry.frames + " кадров");
+          }
+          return { name: name, frames: entry.frames, pixels: got[0], maps: parseMaps(got[1], entry.frames, entry.screen) };
+        });
+      });
+      // Тело не загрузилось — лицо на экране всё равно живёт, а причина видна в консоли.
+      sheets[name].catch(function (error) { console.error("Nota: тело аватара —", error); });
+    }
+    return sheets[name];
+  }
+
   function NotaAvatar(canvas, options) {
     this.canvas = canvas;
     this.onState = options && options.onState;
@@ -361,14 +374,20 @@
     // Реакция поверх ожидания: { id, start, hold }.
     this.reaction = null;
 
-    this.low = document.createElement("canvas");
-    this.low.width = this.low.height = SIZE;
-    this.lowCtx = this.low.getContext("2d");
-    this.image = this.lowCtx.createImageData(SIZE, SIZE);
+    // Клип тела, который сейчас играет: { sheet, start }.
+    this.body = null;
+    this.clips = {};
+
+    canvas.width = W; canvas.height = H;
     this.ctx = canvas.getContext("2d");
+    this.image = this.ctx.createImageData(W, H);
     this.resize();
 
     var self = this;
+    loadSheet("rest").then(function (sheet) {
+      self.rest = sheet;
+      if (reduceMotion || !self.running) self.draw();
+    });
     window.addEventListener("resize", function () { self.resize(); if (reduceMotion) self.draw(); });
     if ("IntersectionObserver" in window) {
       new IntersectionObserver(function (entries) {
@@ -383,20 +402,28 @@
     return performance.now() / 1000 - this.start;
   };
 
-  // Масштаб — целое число физических пикселей на точку спрайта, от ширины
-  // холста в вёрстке: дробный растянул бы точки неровно.
+  // Холст — ровно кадр тела, размер на странице задаёт вёрстка. Строки
+  // развёртки — только когда на пиксель кадра приходится хотя бы пиксель
+  // экрана: уменьшенная линия в четверть строки стала бы серой рябью.
   NotaAvatar.prototype.resize = function () {
-    var dpr = Math.max(1, Math.round(window.devicePixelRatio || 1));
-    this.dpr = dpr;
-    this.scale = Math.max(1, Math.round((this.canvas.clientWidth || SIZE * 2) / SIZE));
-    this.canvas.width = this.canvas.height = SIZE * this.scale * dpr;
-    this.ctx.imageSmoothingEnabled = false;
+    this.scanlines = (this.canvas.clientWidth || W) * (window.devicePixelRatio || 1) >= W - 0.5;
+  };
+
+  // Клипы реакций догружаются заранее, когда до демо недалеко.
+  NotaAvatar.prototype.preload = function () {
+    var self = this;
+    Object.keys(CLIPS).forEach(function (id) {
+      var name = CLIPS[id];
+      loadSheet(name).then(function (sheet) { self.clips[name] = sheet; });
+    });
   };
 
   NotaAvatar.prototype.setState = function (state) {
     if (state !== this.state) {
       this.state = state;
       this.since = this.now();
+      // Смена состояния возвращает тело в покой одним кадром — AvatarReactionPlayer.
+      this.body = null;
     }
     if (this.onState) this.onState(state);
     if (reduceMotion) this.draw();
@@ -417,8 +444,28 @@
   // Реакция на мышь или простой. hold — держится, пока не вызовут release()
   // (перетаскивание, сон); иначе идёт свою длительность.
   NotaAvatar.prototype.react = function (id, hold) {
-    this.reaction = { id: id, start: this.now(), hold: !!hold };
+    var t = this.now();
+    this.reaction = { id: id, start: t, hold: !!hold };
+    // Держится, но не сон — значит, начали тащить: тело сразу в покой.
+    if (hold && !REACTIONS[id].wakes) this.body = null;
+    var clip = CLIPS[id];
+    if (clip && !reduceMotion && this.bodyFrame(t) === null) {
+      var sheet = this.clips[clip];
+      // Клип ещё грузится — лицо реагирует сразу, а тело в этот раз стоит.
+      if (sheet) this.body = { sheet: sheet, start: t };
+      else this.preload();
+    }
     if (reduceMotion) this.draw();
+  };
+
+  // Кадр клипа или null, если тело в покое. Допуск — от ошибок плавающей
+  // точки, как в AvatarBodyMotion.
+  NotaAvatar.prototype.bodyFrame = function (t) {
+    var b = this.body;
+    if (!b) return null;
+    var frame = Math.floor((t - b.start) * FPS + 1e-6);
+    if (frame >= b.sheet.frames) { this.body = null; return null; }
+    return Math.max(0, frame);
   };
 
   // Отпустили или разбудили: держащаяся реакция кончается, спящий просыпается.
@@ -517,37 +564,55 @@
     // Реакция всегда зелёная и без мерцания ожидания: своё мерцание есть только у помех.
     var palette = !reaction && state === "error" ? RED : GREEN;
     var flicker = reaction ? !!(reaction.flicker && reaction.flicker(rt)) : face.flicker;
-    var data = this.image.data, dim = flicker ? 0.55 : 1;
-    data.set(body);
-    for (var py = 0; py < SH; py++) for (var px = 0; px < SW; px++) {
-      if (isCorner(px, py)) continue;
-      var c = palette[ink[py * SW + px]], k = ((SY + py) * SIZE + SX + px) * 4;
-      data[k] = (c >> 16 & 255) * dim; data[k + 1] = (c >> 8 & 255) * dim; data[k + 2] = (c & 255) * dim;
-    }
-    this.lowCtx.putImageData(this.image, 0, 0);
+    if (!this.rest) return;
+    var frame = this.bodyFrame(t);
+    var sheet = frame === null ? this.rest : this.body.sheet;
+    compose(this.image.data, sheet, frame || 0, ink, palette, flicker ? FLICKER : 1, this.scanlines);
+    this.ctx.putImageData(this.image, 0, 0);
 
-    // Покачивание и рывок корпуса: в приложении сдвигается окно, здесь — холст.
+    // Рывок корпуса при чихе: в приложении сдвигается окно на 2 pt за точку, здесь — холст.
     var off = reaction && reaction.body ? reaction.body(rt) : [0, 0];
     var key = off[0] + "," + off[1];
     if (key !== this.bodyKey) {
       this.bodyKey = key;
-      var px = this.canvas.clientWidth / SIZE;
-      this.canvas.style.transform = off[0] || off[1] ? "translate(" + off[0] * px + "px," + off[1] * px + "px)" : "";
-    }
-
-    var full = SIZE * this.scale * this.dpr, unit = this.scale * this.dpr;
-    this.ctx.clearRect(0, 0, full, full);
-    this.ctx.drawImage(this.low, 0, 0, full, full);
-    // Строки развёртки — тонкая линия внизу каждой строки экрана, если на
-    // неё хватает физических пикселей.
-    if (unit >= 4) {
-      this.ctx.fillStyle = "rgba(0,0,0,0.32)";
-      var line = Math.max(1, Math.round(unit / 4));
-      for (var row = 0; row < SH; row++) {
-        this.ctx.fillRect(SX * unit, (SY + row + 1) * unit - line, SW * unit, line);
-      }
+      var unit = 2 * this.canvas.clientWidth / (W / 2);
+      this.canvas.style.transform = off[0] || off[1] ? "translate(" + off[0] * unit + "px," + off[1] * unit + "px)" : "";
     }
   };
+
+  function scaled(value, factor) { return Math.round(value * factor); }
+
+  // Кадр тела и поверх него экран — AvatarFrame.pixels. Тело отрендерено с
+  // погасшим экраном: свечение каждой точки складывается со стеклом по карте
+  // кадра, поэтому блик виден и на тёмных точках, а экран поворачивается
+  // вместе с телом. Складывается с премультипликацией, как в приложении;
+  // canvas хранит цвет без неё, поэтому пиксель экрана туда и обратно.
+  function compose(out, sheet, frame, ink, palette, dim, scanlines) {
+    var src = sheet.pixels.data, rowFrom = sheet.pixels.width * 4, row = W * 4;
+    for (var y = 0; y < H; y++) {
+      var from = y * rowFrom + frame * row;
+      out.set(src.subarray(from, from + row), y * row);
+    }
+    var lights = palette.map(function (c) {
+      return [scaled(c >> 16 & 255, dim), scaled(c >> 8 & 255, dim), scaled(c & 255, dim)];
+    });
+    var map = sheet.maps[frame];
+    for (var k = 0; k < map.length; k += 5) {
+      var dot = map[k + 2];
+      if (isCorner(dot % SW, Math.floor(dot / SW))) continue;
+      var i = (map[k] | map[k + 1] << 8) * 4, cover = map[k + 3], scan = map[k + 4], a = out[i + 3];
+      if (!a) continue;
+      var light = lights[ink[dot]];
+      var factor = scanlines && scan ? 1 - (1 - SCANLINE) * (scan / 255) * (cover / 255) : 1;
+      for (var ch = 0; ch < 3; ch++) {
+        var p = Math.round(out[i + ch] * a / 255);
+        // Свет не выходит за альфу: иначе край экрана светился бы ярче самого себя.
+        p = Math.min(a, p + Math.floor((light[ch] * cover + 127) / 255));
+        if (factor !== 1) p = scaled(p, factor);
+        out[i + ch] = Math.min(255, Math.round(p * 255 / a));
+      }
+    }
+  }
 
   window.NotaAvatar = NotaAvatar;
 })();

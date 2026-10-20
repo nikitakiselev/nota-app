@@ -447,7 +447,7 @@
 
         <div class="swiper-slide">
           <figure class="flex flex-col items-center gap-3.5">
-            <img src="assets/screenshots/settings-general@2x.png?v=e10b1385" alt="Настройки Nota, вкладка «Основные»: клавиша диктовки, микрофон, язык, аватар и его непрозрачность, автозапуск, диагностический лог, детектор речи, версия" class="h-[clamp(230px,30vw,440px)] w-auto max-w-[78vw] cursor-zoom-in" />
+            <img src="assets/screenshots/settings-general@2x.png?v=b8d8df3d" alt="Настройки Nota, вкладка «Основные»: клавиша диктовки, микрофон, язык, аватар и его непрозрачность, автозапуск, диагностический лог, детектор речи, версия" class="h-[clamp(230px,30vw,440px)] w-auto max-w-[78vw] cursor-zoom-in" />
             <figcaption class="font-mono text-xs text-ink-soft text-center max-w-[32ch] leading-relaxed">Основные — клавиша, язык, аватар, детектор речи</figcaption>
           </figure>
         </div>
@@ -528,9 +528,15 @@
         на него курсор — он проявляется целиком, уберёте — снова бледнеет.
       </p>
       <p class="mt-4 text-ink-soft leading-relaxed">
-        А ещё он живой. На клик подмигивает или улыбается, на двойной — подпрыгивает,
-        пока его тащат — пугается, а после долгого полёта делает пируэт, и у него
-        кружится голова. Если долго не диктовать, зевает, пританцовывает под свою
+        И он под рукой. Текст ушёл не в то окно — дважды кликните по аватару, и
+        последняя диктовка окажется в буфере обмена: он подпрыгнет, а на экране
+        из-под листка выедет второй. Сразу после запуска копировать ещё нечего —
+        тогда мигает пустой листок, и буфер остаётся как был. Правый клик открывает
+        то же меню, что у значка в менюбаре.
+      </p>
+      <p class="mt-4 text-ink-soft leading-relaxed">
+        А ещё он живой. На клик подмигивает или улыбается, пока его тащат — пугается,
+        а после долгого полёта делает пируэт, и у него кружится голова. Если долго не диктовать, зевает, пританцовывает под свою
         песенку и через полчаса засыпает; будит его клик или клавиша диктовки.
       </p>
       <p class="mt-4 text-ink-soft leading-relaxed">
@@ -579,7 +585,8 @@
         <p class="mt-3 font-mono text-[11px] text-ink-faint" data-panel="states">Нажмите на состояние, чтобы задержаться на нём; <button type="button" id="avatar-cycle" class="underline decoration-line hover:text-ink">по кругу</button> — снова все подряд.</p>
         <ul id="avatar-reactions" class="mt-3 grid gap-1 text-sm" data-panel="reactions" hidden>
           <li><button type="button" data-trigger="click" class="avatar-state"><b>клик</b><span>подмигивает, улыбается или смотрит звёздочками</span></button></li>
-          <li><button type="button" data-trigger="dbl" class="avatar-state"><b>двойной клик</b><span>подпрыгивает — зажмурившись «ой!» или с сердечками в глазах</span></button></li>
+          <li><button type="button" data-trigger="dbl" class="avatar-state"><b>двойной клик</b><span>копирует последнюю диктовку — подпрыгивает, на экране два листка</span></button></li>
+          <li><button type="button" data-trigger="empty" class="avatar-state"><b>копировать нечего</b><span>диктовок ещё не было — мигает пустой листок</span></button></li>
           <li><button type="button" data-trigger="drag" class="avatar-state"><b>тащат</b><span>пугается или радуется полёту</span></button></li>
           <li><button type="button" data-trigger="drop" class="avatar-state"><b>отпустили</b><span>помехи, пируэт с головокружением или «уф»</span></button></li>
           <li><button type="button" data-trigger="hover" class="avatar-state"><b>курсор</b><span>задержался на секунду — прищурится с подозрением</span></button></li>
@@ -714,7 +721,7 @@
   <button type="button" class="lightbox-btn lightbox-next" aria-label="Следующий снимок">›</button>
   <button type="button" class="lightbox-btn lightbox-close" aria-label="Закрыть">×</button>
 </div>
-<script src="js/avatar.js?v=e0b41a57"></script>
-<script src="js/main.js?v=75a60b7a"></script>
+<script src="js/avatar.js?v=95da4591"></script>
+<script src="js/main.js?v=922b498d"></script>
 </body>
 </html>

@@ -12,7 +12,7 @@
   var SW = 16, SH = 12; // экран
   var BASE = "assets/avatar/";
   // Клип тела у реакции — AvatarReaction.bodyClip.
-  var CLIPS = { poke: "jump", hearts: "jump", dizzy: "spin", hum: "dance" };
+  var CLIPS = { copied: "jump", dizzy: "spin", hum: "dance" };
   // Мерцание приглушает экран, строка развёртки гасит его — AvatarFrame.
   var FLICKER = 0.55, SCANLINE = 0.68;
   var SCREEN = 0x04110a;
@@ -108,7 +108,10 @@
   var SMILE = g("#..# .##."), GRIN = g("#....# .####."), MOUTH_O = g(".##. #..# .##.");
   var MOUTH_OPEN = g("@@@@@@ .####."), FROWN = g(".##. #..#");
   var WAVY_A = g("+.+.+. .+.+.+"), WAVY_B = g(".+.+.+ +.+.+.");
-  var HEART_B = g(".@.@. ##### .###. ..#.."), HEART_S = g("#.# ### .#.");
+  // Листок 7×8, как значок «Скопировать последнее» в меню.
+  var SHEET = g("@@@@@@@ @.....@ @.....@ @.....@ @.....@ @.....@ @.....@ @@@@@@@");
+  var SHEET_CORE = SHEET.map(function (r) { return r.replace(/@/g, "#"); });
+  var SHEET_DIM = SHEET.map(function (r) { return r.replace(/@/g, "+"); });
   var ZED = g("### ..# .#. ###"), ZED_DIM = g("+++ ..+ .+. +++");
   var NOTE = g(".@@ .#. ##. ##."), NOTE_DIM = g(".++ .+. ++. ++.");
   var BLUSH = g(".+.+ +.+.");
@@ -145,21 +148,18 @@
       });
       S.glyph(g("@@@@ .##."), 6, 8);
     } },
-    poke: { dur: 0.9, peak: 0.25, draw: function (S, t) {
-      if (t < 0.06) return S.eyes(2, 0, -1);
-      if (t < 0.62) {
-        S.glyph(SQUINT_L, 2, 2); S.glyph(SQUINT_R, 11, 2); S.rect(7, 9, 2, 1, 3);
-        if (t < 0.3) S.shift(jitter(t, 0.04));
-        return;
-      }
-      S.eyes(t < 0.7 ? 1 : 2);
+    // Двойной клик скопировал последнюю диктовку: копия выезжает из-под листка.
+    copied: { dur: 1.5, peak: 0.8, draw: function (S, t) {
+      if (t >= 1.3) return S.eyes(t < 1.38 ? 1 : 2);
+      var u = Math.min(1, t / 0.3), dx = Math.round(3 * (1 - u)), dy = Math.round(2 * (1 - u));
+      S.glyph(SHEET_CORE, 6, 1);
+      S.rect(4 + dx, 4 - dy, 5, 6, 0);
+      S.glyph(SHEET, 3 + dx, 3 - dy);
     } },
-    hearts: { dur: 1.8, peak: 0.05, draw: function (S, t) {
-      if (t >= 1.7) return S.eyes(t < 1.76 ? 1 : 2);
-      var u = t % 0.6;
-      if (u < 0.12 || (u >= 0.2 && u < 0.32)) { S.glyph(HEART_B, 1, 3); S.glyph(HEART_B, 10, 3); }
-      else { S.glyph(HEART_S, 2, 4); S.glyph(HEART_S, 11, 4); }
-      S.glyph(SMILE, 6, 8);
+    // Копировать нечего: пустой листок мигает дважды.
+    empty: { dur: 1.0, peak: 0.1, draw: function (S, t) {
+      if (t >= 0.8) return S.eyes(t < 0.88 ? 1 : 2);
+      if (t % 0.4 < 0.25) S.glyph(SHEET_DIM, 4, 2);
     } },
     scared: { dur: 1.8, peak: 0.6, draw: function (S, t) {
       if (t < 0.06) return S.eyes(2, 0, -1);

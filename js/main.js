@@ -215,7 +215,7 @@
     // Реакции — как в приложении (AvatarGestures, AvatarReactionPicker): случайная
     // из своего списка, но не та же, что в прошлый раз.
     var TRIGGERS = {
-      click: ["wink", "smile", "stars"], dbl: ["poke", "hearts"], drag: ["scared", "wheee"],
+      click: ["wink", "smile", "stars"], dbl: ["copied"], empty: ["empty"], drag: ["scared", "wheee"],
       drop: ["glitch", "dizzy", "relief"], hover: ["squint"], burst: ["annoyed", "angry", "shy"],
       idle: ["yawn", "hum", "sneeze", "sleep"]
     };

@@ -89,6 +89,16 @@ xattr -dr com.apple.quarantine /Applications/Nota.app
 
 ## Разработка сайта
 
+Стили Tailwind собираются заранее в `css/tailwind.css`, а не в браузере
+через cdn.tailwindcss.com: если этот скрипт не загружался (блокировщик,
+прокси, недоступный CDN), посетитель видел страницу без вёрстки. Swiper
+по той же причине лежит в `assets/vendor/`. После правки классов в
+`index.html` или `js/`:
+
+```sh
+./scripts/build-css.sh
+```
+
 После любой правки картинок, стилей или скрипта и перед коммитом:
 
 ```sh

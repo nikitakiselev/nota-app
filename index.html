@@ -15,674 +15,234 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,420;0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Golos+Text:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 
-<link rel="stylesheet" href="assets/vendor/swiper/swiper-bundle.min.css?v=74ca6aae" />
-
-<link rel="stylesheet" href="css/tailwind.css?v=bea7e804" />
-
-<link rel="stylesheet" href="css/style.css?v=a027381a" />
+<link rel="stylesheet" href="css/style.css?v=74a2e072" />
 </head>
-<body class="bg-bg text-ink font-sans antialiased selection:bg-violet selection:text-white">
+<body>
 
-<div id="scroll-meter" aria-hidden="true"></div>
-
-<!-- ==================================================================== -->
-<!-- NAV                                                                   -->
-<!-- ==================================================================== -->
-<header class="fixed top-0 inset-x-0 z-50 border-b border-line/70 bg-bg/80 backdrop-blur-md">
-  <div class="mx-auto max-w-[1180px] px-5 sm:px-8 h-16 flex items-center justify-between">
-    <a href="#top" class="flex items-center gap-2.5 font-display text-lg font-medium tracking-tight">
-      <img src="assets/icons/nota-256.png?v=54fc9585" alt="Nota" width="32" height="32" class="w-8 h-8 rounded-xl" />
-      Nota
-    </a>
-
-    <nav id="nav-menu" class="hidden lg:flex items-center gap-7 text-[15px] text-ink-soft">
-      <a href="#privacy" class="hover:text-ink transition-colors">Приватность</a>
-      <a href="#layers" class="hover:text-ink transition-colors">Коррекция</a>
-      <a href="#screenshots" class="hover:text-ink transition-colors">Интерфейс</a>
-      <a href="#avatar" class="hover:text-ink transition-colors">Аватар</a>
-      <a href="#stats" class="hover:text-ink transition-colors">Статистика</a>
-    </nav>
-
-    <div class="flex items-center gap-3">
-      <a href="https://github.com/nikitakiselev/nota-app/releases/latest"
-         class="hidden sm:inline-flex items-center gap-2 rounded-full bg-ink text-bg px-4 py-2 text-sm font-medium hover:opacity-90 transition-opacity">
-        Скачать
-      </a>
-      <button id="nav-toggle" aria-expanded="false" aria-controls="nav-menu-mobile"
-              class="lg:hidden grid place-items-center w-10 h-10 rounded-full hover:bg-bg-alt transition-colors">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-      </button>
-    </div>
-  </div>
-  <!-- мобильное меню -->
-  <div id="nav-menu-mobile" class="hidden lg:hidden flex-col gap-1 border-t border-line/70 bg-bg px-5 py-3">
-    <a href="#privacy" class="rounded-xl px-3 py-2.5 text-ink-soft hover:bg-bg-alt hover:text-ink transition-colors">Приватность</a>
-    <a href="#layers" class="rounded-xl px-3 py-2.5 text-ink-soft hover:bg-bg-alt hover:text-ink transition-colors">Коррекция</a>
-    <a href="#screenshots" class="rounded-xl px-3 py-2.5 text-ink-soft hover:bg-bg-alt hover:text-ink transition-colors">Интерфейс</a>
-    <a href="#avatar" class="rounded-xl px-3 py-2.5 text-ink-soft hover:bg-bg-alt hover:text-ink transition-colors">Аватар</a>
-    <a href="#stats" class="rounded-xl px-3 py-2.5 text-ink-soft hover:bg-bg-alt hover:text-ink transition-colors">Статистика</a>
-    <a href="https://github.com/nikitakiselev/nota-app/releases/latest" class="mt-1 rounded-xl px-3 py-2.5 font-medium text-ink">Скачать</a>
-    <a href="https://pay.cloudtips.ru/p/e2a1bf31" class="rounded-xl px-3 py-2.5 text-ink-soft hover:bg-bg-alt transition-colors">Поддержать разработчика</a>
-  </div>
+<header class="top">
+  <div class="logo"><img src="assets/icons/nota-64.png?v=dbec6a96" alt="">Nota</div>
+  <nav aria-label="Разделы">
+    <button data-to="privacy">Приватность</button><button data-to="dict">Словарь</button><button data-to="shots">Интерфейс</button><button data-to="avatar">Аватар</button><button data-to="stats">Статистика</button>
+  </nav>
+  <a class="btn sm main" href="https://github.com/nikitakiselev/nota-app/releases/latest">Скачать</a>
 </header>
 
-<main id="top">
-
-<!-- ==================================================================== -->
-<!-- HERO                                                                  -->
-<!-- ==================================================================== -->
-<section id="hero" class="relative overflow-hidden pt-32 pb-20 sm:pt-40 sm:pb-28">
-  <div class="pointer-events-none absolute -top-24 -right-32 w-[520px] h-[520px] rounded-full bg-violet-soft blur-3xl opacity-70 motion-safe:animate-[pulse_9s_ease-in-out_infinite]"></div>
-  <div class="pointer-events-none absolute top-40 -left-40 w-[420px] h-[420px] rounded-full bg-mint-soft blur-3xl opacity-70 motion-safe:animate-[pulse_11s_ease-in-out_infinite]"></div>
-
-  <div class="relative mx-auto max-w-[1180px] px-5 sm:px-8 grid lg:grid-cols-[1.05fr_0.95fr] gap-16 items-center">
+<main>
+<!-- ============ ПЕРВЫЙ ЭКРАН: одна диктовка на прокрутке ============ -->
+<section class="scene" id="hero">
+  <div class="pin" data-s="0"><div class="wrap grid">
     <div>
-      <span class="inline-flex items-center gap-2 rounded-full bg-card border border-line px-3.5 py-1.5 text-xs font-mono tracking-wide text-ink-soft shadow-card">
-        <span class="w-1.5 h-1.5 rounded-full bg-mint"></span>
-        MENU BAR · APPLE SILICON · БЕЗ ОБЛАКА
-      </span>
-
-      <h1 class="mt-6 font-display font-medium text-[clamp(2.5rem,5.6vw,4.25rem)] leading-[1.04] tracking-[-0.01em]">
-        Зажмите правый&nbsp;⌘ —
-        <span class="italic text-violet">и то, что вы сказали</span>,
-        уже в тексте.
-      </h1>
-
-      <p class="mt-6 text-[clamp(1.05rem,1.6vw,1.25rem)] leading-relaxed text-ink-soft max-w-[46ch]">
-        Локальное распознавание речи для macOS. Whisper.cpp понимает русскую речь
-        вперемешку с техническими терминами и не путает <span class="font-mono text-ink">terraform</span>
-        с «реформой». Ни один звук не покидает ваш Mac.
-      </p>
-
-      <div class="mt-9 flex flex-wrap items-center gap-4">
-        <a href="https://github.com/nikitakiselev/nota-app/releases/latest"
-           class="inline-flex items-center gap-2 rounded-full bg-ink text-bg px-6 py-3.5 font-medium hover:opacity-90 transition-opacity">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v12"/><path d="m7 11 5 5 5-5"/><path d="M5 20h14"/></svg>
-          Скачать бесплатно
-        </a>
-        <a href="https://pay.cloudtips.ru/p/e2a1bf31" target="_blank" rel="noopener"
-           class="inline-flex items-center gap-2 rounded-full border border-line bg-bg-alt/70 text-ink-soft px-5 py-3.5 font-medium hover:text-ink transition-colors">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4Z"/><path d="M6 2v3M10 2v3M14 2v3"/></svg>
-          Купить кофе разработчику
-        </a>
-        <a href="#layers" class="inline-flex items-center gap-1.5 px-2 py-3.5 font-medium text-ink-soft hover:text-ink transition-colors">
-          Как работает коррекция терминов
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
-        </a>
+      <h1 class="words"><span>Зажмите</span><span>Говорите</span><span>Отпустите</span><span>Готово</span></h1>
+      <div class="desc">
+        <p>Правый ⌘ — единственная клавиша, которую нужно запомнить. Nota — голосовой ввод для macOS.</p>
+        <p>По-русски, с терминами, как привыкли. Аватар показывает, что слышит вас.</p>
+        <p>Распознавание идёт на вашем Mac. В сеть не уходит ни один звук.</p>
+        <p>Текст уже в активном окне, а terraform не стал «реформой».</p>
       </div>
-      <p class="mt-3 font-mono text-xs text-ink-faint">macOS 15 или новее · Apple Silicon</p>
-      <p class="mt-2 text-sm text-ink-soft">
-        Напишите, если хотите узнать о выходе —
-        <a href="mailto:kiselev2008@gmail.com" class="underline decoration-line hover:text-ink hover:decoration-ink transition-colors">kiselev2008@gmail.com</a>
-      </p>
-
-      <dl class="mt-11 flex flex-wrap gap-x-9 gap-y-4 font-mono text-sm">
-        <div>
-          <dt class="text-ink-faint">задержка (прогрето)</dt>
-          <dd class="text-ink font-medium mt-0.5">~1.5&nbsp;с</dd>
-        </div>
-        <div>
-          <dt class="text-ink-faint">модель</dt>
-          <dd class="text-ink font-medium mt-0.5">large-v3, q5_0</dd>
-        </div>
-        <div>
-          <dt class="text-ink-faint">сеть во время работы</dt>
-          <dd class="text-ink font-medium mt-0.5">0&nbsp;байт</dd>
-        </div>
-      </dl>
-    </div>
-
-    <!-- Мокап: аватар + коррекция терминов «на лету» -->
-    <div class="reveal relative">
-      <div class="relative rounded-5xl bg-gradient-to-br from-bg-alt to-card p-4 sm:p-5 shadow-soft border border-line/60">
-        <div class="relative rounded-4xl bg-[#e9ecf9] overflow-hidden aspect-[6/5]">
-          <!-- ряд «менюбара» -->
-          <div class="absolute top-0 inset-x-0 h-9 bg-white/70 backdrop-blur flex items-center justify-between px-4 border-b border-line/60">
-            <div class="flex items-center gap-1.5">
-              <span class="w-2.5 h-2.5 rounded-full bg-coral/70"></span>
-              <span class="w-2.5 h-2.5 rounded-full bg-amber/70"></span>
-              <span class="w-2.5 h-2.5 rounded-full bg-mint/70"></span>
-            </div>
-            <span class="font-mono text-[11px] text-ink-faint">Claude Code — терминал</span>
-            <span class="w-4 h-4 rounded bg-violet/15"></span>
-          </div>
-
-          <!-- аватар Nota: слушает, распознаёт, ставит галочку в такт печатающемуся тексту -->
-          <canvas id="hero-avatar" class="absolute top-11 right-3 w-[92px] h-[112px] sm:w-[115px] sm:h-[140px]"
-                  role="img" aria-label="Аватар Nota: телевизор с нотой на макушке и экраном-осциллографом"></canvas>
-
-          <!-- «текстовое поле» с печатающейся коррекцией -->
-          <div class="absolute left-4 right-4 bottom-4 rounded-2xl bg-ink/95 text-white/90 px-4 py-3.5 font-mono text-[13px] sm:text-sm shadow-lg min-h-[3.2rem] flex items-center">
-            <span class="text-mint mr-2">$</span>
-            <span id="typewriter" class="whitespace-pre"></span>
-          </div>
-
-          <div id="hero-hotkey" class="absolute left-4 top-14 font-mono text-[11px] text-ink-soft bg-white/80 rounded-full px-2.5 py-1 transition-opacity duration-300">
-            правый ⌘ удержан
-          </div>
-        </div>
+      <div class="prog"><i></i></div>
+      <div class="hero-cta">
+        <a class="btn main" href="https://github.com/nikitakiselev/nota-app/releases/latest">Скачать бесплатно</a>
+        <small>macOS 15 или новее, Apple Silicon</small>
       </div>
+      <p class="hint">Крутите вниз — это и есть вся инструкция</p>
     </div>
-  </div>
+    <div class="stage">
+      <div class="win"><div class="dots"><i></i><i></i><i></i></div><div class="line"></div>
+        <canvas class="av" role="img" aria-label="Аватар Nota: телевизор с нотой на макушке и экраном-осциллографом"></canvas></div>
+      <canvas class="eq"></canvas>
+      <div class="key" aria-hidden="true">⌘</div>
+    </div>
+  </div></div>
 </section>
 
-<!-- ==================================================================== -->
-<!-- ORIGIN OF THE NAME                                                    -->
-<!-- ==================================================================== -->
-<section class="reveal py-20 sm:py-28 border-y border-line/70">
-  <div class="mx-auto max-w-[720px] px-6 text-center">
-    <img src="assets/icons/nota-256.png?v=54fc9585" alt="Nota" width="96" height="96"
-         class="mx-auto w-20 h-20 sm:w-24 sm:h-24 rounded-[22%] shadow-lg shadow-ink/10">
-    <p class="mt-7 font-display italic text-[clamp(1.35rem,2.6vw,1.9rem)] leading-[1.45] text-ink">
-      Нота — придуманный людьми способ записать звук значками.
-      Nota делает ровно это, только значки — буквы.
-    </p>
-    <p class="mt-6 text-ink-soft leading-relaxed max-w-[52ch] mx-auto">
-      Нотная запись появилась, чтобы музыкальный звук не исчезал бесследно.
-      Nota ловит сказанное вслух и превращает в текст, который остаётся.
-    </p>
+<!-- ============ ИМЯ ============ -->
+<section class="sec"><div class="wrap name">
+  <img src="assets/icons/nota-256.png?v=54fc9585" alt="Значок Nota">
+  <div>
+    <p class="big" id="name-text">Нота — придуманный людьми способ записать звук значками. Nota делает ровно это, только значки — буквы.</p>
+    <p class="lead">Нотная запись появилась, чтобы музыкальный звук не исчезал бесследно. Nota ловит сказанное вслух и превращает в текст, который остаётся.</p>
+  </div>
+</div></section>
+
+<!-- ============ ПРИВАТНОСТЬ ============ -->
+<section class="sec" id="privacy"><div class="wrap">
+  <h2>Речь распознаётся на этом Mac. Точка.</h2>
+  <p class="zero"><span id="zero">0</span><small>байт</small></p>
+  <p class="zero-cap">уходит в сеть, пока вы диктуете</p>
+  <p class="lead">Сеть используется один раз — чтобы скачать веса модели при установке. После этого Nota может работать в самолёте: whisper.cpp и Metal делают всё распознавание локально, без серверов и без API-ключей.</p>
+  <p class="lead">Даже на самом Mac текст остаётся только там, где вы разрешили: историю последних фраз и диагностический лог можно выключить в настройках — и тогда ваши диктовки не остаются на диске вовсе.</p>
+  <div class="three">
+    <div><h3>Распознавание — офлайн</h3><p>Модель ggml large-v3 (q5_0, ~1&nbsp;ГБ) загружается в память и работает через Metal на Apple Silicon. Запись целиком остаётся в процессе приложения.</p></div>
+    <div><h3>Сеть — только один раз</h3><p>Единственный сетевой обмен за всё время использования — разовая загрузка весов модели при установке. Дальше приложению сеть не нужна.</p></div>
+    <div><h3>Без исключений</h3><p>Ни аккаунта, ни API-ключей. Текст диктовок не уходит с Mac ни при каких настройках, а статистика хранит только числа — и тоже лежит здесь.</p></div>
+  </div>
+</div></section>
+
+<!-- ============ ДЕТЕКТОР РЕЧИ: вторая сцена на прокрутке ============ -->
+<section class="scene" id="vad">
+  <div class="pin" data-s="0"><div class="wrap grid">
+    <div>
+      <h2>Нет голоса — нет и выдуманного текста</h2>
+      <div class="words"><span>Тишина</span><span>Шум</span><span>Музыка</span><span>Отсечено</span></div>
+      <div class="desc">
+        <p>Whisper учился на видео с субтитрами, а там на тишине идут финальные титры. Поэтому на записи без голоса он не молчит, а выдумывает фразу.</p>
+        <p>Громкий шум — и в ваше окно попала бы дата, которой никто не называл.</p>
+        <p>Фоновая музыка без слов — и вот оно, знаменитое «Продолжение следует...».</p>
+        <p>Поэтому запись сначала слушает Silero VAD — компактная нейросеть, отличающая голос от всего остального. Голоса нет — whisper не запускается.</p>
+      </div>
+      <div class="prog"><i></i></div>
+    </div>
+    <div class="stage">
+      <div class="win"><div class="dots"><i></i><i></i><i></i></div><p class="tag"></p><div class="line"></div>
+        <canvas class="av" role="img" aria-label="Аватар Nota"></canvas></div>
+      <canvas class="eq"></canvas>
+    </div>
+  </div></div>
+</section>
+<section class="sec" style="padding-top:clamp(50px,8vh,90px)"><div class="wrap">
+  <p class="lead" style="margin-top:0">В замере было пять записей без голоса. Без VAD — выдуманный текст на каждой, с VAD все пять отсечены, а речь проходит, даже тихая, на 30&nbsp;дБ ниже обычной. Проверка занимает миллисекунды и тоже идёт локально. Порог и минимальную длительность речи можно настроить, а детектор — выключить.</p>
+</div></section>
+
+<!-- ============ СЛОВАРЬ: стопка карточек ============ -->
+<section class="sec" id="dict" style="padding-top:0"><div class="wrap">
+  <h2>Слово пишется в словарь один раз — остальное Nota делает сама</h2>
+  <p class="lead">Один словарь: слово — так, как оно должно писаться, а в скобках, если нужно, — во что его превращает модель. Из этого собираются три защиты.</p>
+  <div class="yaml"><i># dictionary.yaml</i>
+words:
+  - terraform
+  - Caddy: <b>[кадди]</b>
+  - Claude Code: <b>[код-код, клад код, плот кода]</b></div>
+  <div class="stack">
+    <div class="card" style="--i:0;background:var(--f-violet)">
+      <div><p class="when">До распознавания</p><h3>Подсказка декодеру</h3><p>Слова словаря уходят в whisper ещё до начала записи и заранее сдвигают вероятности в их пользу — модель пишет их правильно сама.</p></div>
+      <div class="ex"><s>реформ</s><br><b>terraform</b></div>
+    </div>
+    <div class="card" style="--i:1;background:var(--f-mint)">
+      <div><p class="when">После распознавания</p><h3>Варианты и регистр</h3><p>Если модель всё же услышала по-своему, вариант из скобок заменяется словом — только целым словом. Латинское слово всегда пишется как в словаре.</p></div>
+      <div class="ex"><s>клад код</s><br><b>Claude Code</b></div>
+    </div>
+    <div class="card" style="--i:2;background:var(--f-amber)">
+      <div><p class="when">Для опытных</p><h3>Регулярные выражения</h3><p>Для того, что словом не выразить: правило с контекстом, которое срабатывает только рядом с нужным словом.</p></div>
+      <div class="ex">nginx <s>статистику</s><br>nginx <b>статику</b></div>
+    </div>
+  </div>
+  <p class="after">Всё это — одна вкладка «Словарь». Вставьте распознанную фразу в поле проверки — и сразу увидите, что с ней сделает словарь, ещё до того как сохраните его. А слово можно вообще не вписывать руками: поправьте его в своей же фразе на вкладке «История» — приложение предложит запомнить исправление вариантом или новым словом.</p>
+</div></section>
+
+<!-- ============ ИНТЕРФЕЙС: водопад скриншотов ============ -->
+<section class="sec" id="shots">
+  <div class="blob b1"></div><div class="blob b2"></div>
+  <div class="wrap" style="position:relative">
+    <h2>Всё видно и проверяется на месте</h2>
+    <p class="lead">Пять вкладок настроек. Каждое слово словаря проверяется на живом тексте прямо в окне. Нажмите на снимок, чтобы открыть его крупно.</p>
+    <div class="cols" id="cols">
+      <div><img src="assets/screenshots/settings-general@2x.png?v=b8d8df3d" alt="Основные — клавиша, язык, аватар, детектор речи"><img src="assets/screenshots/settings-dictionary@2x.png?v=97fff259" alt="Словарь — слова и во что их превращает модель"><img src="assets/screenshots/settings-model@2x.png?v=ff684fce" alt="Модель — расположение и состояние весов"><img src="assets/screenshots/settings-stats@2x.png?v=212ee11c" alt="Статистика — слова, темп речи, экономия времени"></div>
+      <div><img src="assets/screenshots/settings-stats@2x.png?v=212ee11c" alt="Статистика — слова, темп речи, экономия времени"><img src="assets/screenshots/settings-rules@2x.png?v=8f03ea82" alt="Регулярные выражения — для того, что словом не выразить"><img src="assets/screenshots/settings-history@2x.png?v=ebd38640" alt="История — последние фразы, правка учит словарь"><img src="assets/screenshots/settings-general@2x.png?v=b8d8df3d" alt="Основные — клавиша, язык, аватар, детектор речи"></div>
+      <div><img src="assets/screenshots/settings-history@2x.png?v=ebd38640" alt="История — последние фразы, правка учит словарь"><img src="assets/screenshots/settings-dictionary@2x.png?v=97fff259" alt="Словарь — слова и во что их превращает модель"><img src="assets/screenshots/settings-model@2x.png?v=ff684fce" alt="Модель — расположение и состояние весов"><img src="assets/screenshots/settings-rules@2x.png?v=8f03ea82" alt="Регулярные выражения — для того, что словом не выразить"></div>
+    </div>
+    <ul class="tabs-list">
+      <li><b>Основные</b> — клавиша, микрофон, аватар</li><li><b>Словарь</b> — слова и регулярные выражения</li><li><b>История</b> — правка учит словарь</li><li><b>Статистика</b> — слова, темп, экономия</li><li><b>Модель</b> — где лежат веса</li>
+    </ul>
   </div>
 </section>
+<dialog id="zoom"><img alt=""><p></p></dialog>
 
-<!-- ==================================================================== -->
-<!-- PRIVACY                                                               -->
-<!-- ==================================================================== -->
-<section id="privacy" class="relative py-24 sm:py-32 bg-bg-alt">
-  <div class="mx-auto max-w-[1180px] px-5 sm:px-8">
-    <div class="reveal max-w-[62ch]">
-      <span class="font-mono text-xs tracking-wide text-mint">/ ПРИВАТНОСТЬ</span>
-      <h2 class="mt-4 font-display font-medium text-[clamp(1.9rem,3.4vw,2.75rem)] leading-[1.1] tracking-[-0.01em]">
-        Речь распознаётся на этом Mac. Точка.
-      </h2>
-      <p class="mt-5 text-lg text-ink-soft leading-relaxed">
-        Сеть используется один раз — чтобы скачать веса модели при установке.
-        После этого Nota может работать в самолёте: whisper.cpp и Metal
-        делают всё распознавание локально, без серверов и без API-ключей.
-      </p>
-      <p class="mt-4 text-ink-soft leading-relaxed">
-        Даже на самом Mac текст остаётся только там, где вы разрешили: историю
-        последних фраз и диагностический лог можно выключить в настройках —
-        и тогда ваши диктовки не остаются на диске вовсе.
-      </p>
-    </div>
-
-    <div class="reveal-stagger mt-14 grid md:grid-cols-3 gap-5">
-      <div class="rounded-4xl bg-card border border-line/70 p-7 shadow-card">
-        <div class="w-11 h-11 rounded-2xl bg-mint-soft grid place-items-center">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgb(var(--mint))" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
-        </div>
-        <h3 class="mt-5 font-display text-xl font-medium">Распознавание — офлайн</h3>
-        <p class="mt-2.5 text-ink-soft leading-relaxed">
-          Модель ggml large-v3 (q5_0, ~1&nbsp;ГБ) загружается в память и работает
-          через Metal на Apple Silicon. Запись целиком остаётся в процессе приложения.
-        </p>
+<!-- ============ АВАТАР ============ -->
+<section class="sec" id="avatar"><div class="wrap">
+  <h2>Видно, что Nota слушает, — ещё до конца фразы</h2>
+  <p class="lead">На экране живёт маленький объёмный персонаж: телевизор с нотой на макушке, ручками, ножками и зелёным экраном старого осциллографа. Пока вы говорите, по экрану бежит волна голоса — догадываться, услышал ли микрофон, не нужно.</p>
+  <div class="av-grid">
+    <div class="av-box">
+      <div class="av-stage"><canvas id="av-demo" role="img" aria-label="Аватар Nota — его можно нажать и потащить"></canvas></div>
+      <div class="seg" role="tablist">
+        <button role="tab" aria-selected="true" data-tab="states">Состояния</button><button role="tab" aria-selected="false" data-tab="reactions">Реакции</button>
       </div>
-
-      <div class="rounded-4xl bg-card border border-line/70 p-7 shadow-card">
-        <div class="w-11 h-11 rounded-2xl bg-violet-soft grid place-items-center">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgb(var(--violet))" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18M3 12h18"/></svg>
-        </div>
-        <h3 class="mt-5 font-display text-xl font-medium">Сеть — только один раз</h3>
-        <p class="mt-2.5 text-ink-soft leading-relaxed">
-          Единственный сетевой обмен за всё время использования — разовая загрузка
-          весов модели при установке. Дальше приложению сеть не нужна.
-        </p>
-      </div>
-
-      <div class="rounded-4xl bg-card border border-line/70 p-7 shadow-card">
-        <div class="w-11 h-11 rounded-2xl bg-amber-soft grid place-items-center">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgb(var(--amber))" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6Z"/><path d="m9 12 2 2 4-4"/></svg>
-        </div>
-        <h3 class="mt-5 font-display text-xl font-medium">Без исключений</h3>
-        <p class="mt-2.5 text-ink-soft leading-relaxed">
-          Ни аккаунта, ни API-ключей. Текст диктовок не уходит с Mac ни при каких
-          настройках, а статистика хранит только числа — и тоже лежит здесь.
-        </p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ==================================================================== -->
-<!-- SPEECH DETECTOR                                                       -->
-<!-- ==================================================================== -->
-<section id="vad" class="py-24 sm:py-32 border-b border-line/70">
-  <div class="mx-auto max-w-[1180px] px-5 sm:px-8 grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-    <div class="reveal max-w-[58ch]">
-      <span class="font-mono text-xs tracking-wide text-coral">/ VAD · ДЕТЕКТОР РЕЧИ</span>
-      <h2 class="mt-4 font-display font-medium text-[clamp(1.9rem,3.4vw,2.75rem)] leading-[1.1] tracking-[-0.01em]">
-        Нейросетевой VAD: нет голоса — нет и выдуманного текста
-      </h2>
-      <p class="mt-5 text-lg text-ink-soft leading-relaxed">
-        Whisper учился на видео с субтитрами, а в видео на тишине обычно идут
-        финальные титры. Поэтому на записи без голоса — тишина, шум, фоновая
-        музыка — он не возвращает пустую строку, а выдумывает такую фразу:
-        «Продолжение следует...» или знаменитое «Субтитры сделал DimaTorzok».
-        Без защиты она попала бы в ваше окно.
-      </p>
-      <p class="mt-4 text-ink-soft leading-relaxed">
-        Поэтому когда вы отпускаете клавишу, запись сначала слушает Silero VAD —
-        компактная нейросеть, обученная отличать человеческий голос от всего
-        остального. Голоса не нашлось — запись не уходит в whisper, и в окно
-        ничего не вставится.
-        Проверка занимает миллисекунды и тоже идёт локально. Порог и минимальную
-        длительность речи можно настроить, а детектор — выключить.
-      </p>
-    </div>
-
-    <div class="reveal rounded-4xl bg-card border border-line/70 p-6 sm:p-7 shadow-card">
-      <span class="font-mono text-xs text-ink-faint">замер · что выдал whisper на записи без голоса</span>
-      <div class="mt-4 grid gap-3 font-mono text-xs sm:text-sm leading-relaxed">
-        <div class="rounded-xl bg-bg-alt px-4 py-3 flex items-start justify-between gap-4">
-          <span class="text-ink-soft">тишина в комнате</span>
-          <span class="text-coral line-through decoration-1 text-right">«Время обновления: 06:00»</span>
-        </div>
-        <div class="rounded-xl bg-bg-alt px-4 py-3 flex items-start justify-between gap-4">
-          <span class="text-ink-soft">громкий шум</span>
-          <span class="text-coral line-through decoration-1 text-right">«Время обновления: 20.04.2011»</span>
-        </div>
-        <div class="rounded-xl bg-bg-alt px-4 py-3 flex items-start justify-between gap-4">
-          <span class="text-ink-soft">музыка без слов</span>
-          <span class="text-coral line-through decoration-1 text-right">«Продолжение следует...»</span>
-        </div>
-      </div>
-      <p class="mt-5 text-sm text-ink-soft leading-relaxed">
-        В замере было пять записей без голоса. Без VAD — выдуманный текст на
-        каждой, с VAD все пять отсечены, а речь проходит, даже тихая, на 30&nbsp;дБ
-        ниже обычной.
-      </p>
-    </div>
-  </div>
-</section>
-
-<!-- ==================================================================== -->
-<!-- CORRECTION LAYERS                                                     -->
-<!-- ==================================================================== -->
-<section id="layers" class="py-24 sm:py-32">
-  <div class="mx-auto max-w-[1180px] px-5 sm:px-8">
-    <div class="reveal max-w-[62ch]">
-      <span class="font-mono text-xs tracking-wide text-violet">/ КОРРЕКЦИЯ ТЕРМИНОВ</span>
-      <h2 class="mt-4 font-display font-medium text-[clamp(1.9rem,3.4vw,2.75rem)] leading-[1.1] tracking-[-0.01em]">
-        Слово пишется в словарь один раз — остальное Nota делает сама
-      </h2>
-      <p class="mt-5 text-lg text-ink-soft leading-relaxed">
-        Один словарь: слово — так, как оно должно писаться, а в скобках, если
-        нужно, — во что его превращает модель. Из этого собираются три защиты.
-      </p>
-    </div>
-
-    <div class="reveal mt-10 max-w-[62ch] rounded-3xl bg-card border border-line/70 shadow-card px-6 py-5 font-mono text-sm leading-relaxed">
-      <p class="text-ink-faint"># dictionary.yaml</p>
-      <p>words:</p>
-      <p>&nbsp;&nbsp;- terraform</p>
-      <p>&nbsp;&nbsp;- Caddy: <span class="text-violet">[кадди]</span></p>
-      <p>&nbsp;&nbsp;- Claude Code: <span class="text-violet">[код-код, клад код, плот кода]</span></p>
-    </div>
-
-    <div class="reveal-stagger mt-10 grid lg:grid-cols-3 gap-5 lg:gap-4 relative">
-      <!-- соединительная линия для десктопа -->
-      <div class="hidden lg:block absolute top-[52px] left-[16.6%] right-[16.6%] h-px bg-line" aria-hidden="true"></div>
-
-      <div class="relative rounded-4xl bg-card border border-line/70 p-6 shadow-card">
-        <span class="font-mono text-xs text-ink-faint">ШАГ 1 · до распознавания</span>
-        <div class="mt-3 w-10 h-10 rounded-full bg-violet text-white grid place-items-center font-mono text-sm font-medium relative z-10">01</div>
-        <h3 class="mt-4 font-display text-lg font-medium">Подсказка декодеру</h3>
-        <p class="mt-2 text-sm text-ink-soft leading-relaxed">
-          Слова словаря уходят в whisper ещё до начала записи и заранее
-          сдвигают вероятности в их пользу — модель пишет их правильно сама.
-        </p>
-        <div class="mt-4 rounded-xl bg-bg-alt px-3 py-2.5 font-mono text-xs leading-relaxed">
-          <span class="text-coral line-through decoration-1">реформ</span>
-          <span class="text-ink-faint mx-1">→</span>
-          <span class="text-mint">terraform</span>
-        </div>
-      </div>
-
-      <div class="relative rounded-4xl bg-card border border-line/70 p-6 shadow-card">
-        <span class="font-mono text-xs text-ink-faint">ШАГ 2 · после распознавания</span>
-        <div class="mt-3 w-10 h-10 rounded-full bg-violet text-white grid place-items-center font-mono text-sm font-medium relative z-10">02</div>
-        <h3 class="mt-4 font-display text-lg font-medium">Варианты и регистр</h3>
-        <p class="mt-2 text-sm text-ink-soft leading-relaxed">
-          Если модель всё же услышала по-своему, вариант из скобок заменяется
-          словом — только целым словом. Латинское слово всегда пишется как в словаре.
-        </p>
-        <div class="mt-4 rounded-xl bg-bg-alt px-3 py-2.5 font-mono text-xs leading-relaxed">
-          <span class="text-coral line-through decoration-1">клад код</span>
-          <span class="text-ink-faint mx-1">→</span>
-          <span class="text-mint">Claude Code</span>
-        </div>
-      </div>
-
-      <div class="relative rounded-4xl bg-card border border-line/70 p-6 shadow-card">
-        <span class="font-mono text-xs text-ink-faint">ШАГ 3 · для опытных</span>
-        <div class="mt-3 w-10 h-10 rounded-full bg-card text-violet border-2 border-violet grid place-items-center font-mono text-sm font-medium relative z-10">03</div>
-        <h3 class="mt-4 font-display text-lg font-medium">Регулярные выражения</h3>
-        <p class="mt-2 text-sm text-ink-soft leading-relaxed">
-          Для того, что словом не выразить: правило с контекстом, которое
-          срабатывает только рядом с нужным словом.
-        </p>
-        <div class="mt-4 rounded-xl bg-bg-alt px-3 py-2.5 font-mono text-xs leading-relaxed">
-          nginx <span class="text-coral line-through decoration-1">статистику</span>
-          <span class="text-ink-faint mx-1">→</span>
-          nginx <span class="text-mint">статику</span>
-        </div>
-      </div>
-    </div>
-
-    <p class="reveal mt-10 text-ink-soft max-w-[70ch]">
-      Всё это — одна вкладка «Словарь». Вставьте распознанную фразу в поле
-      проверки — и сразу увидите, что с ней сделает словарь, ещё до того как
-      сохраните его. А слово можно вообще не вписывать руками: поправьте его
-      в своей же фразе на вкладке «История» — приложение предложит запомнить
-      исправление вариантом или новым словом.
-    </p>
-  </div>
-</section>
-
-<!-- ==================================================================== -->
-<!-- SCREENSHOTS                                                           -->
-<!-- ==================================================================== -->
-<section id="screenshots" class="py-24 sm:py-32 bg-bg-alt overflow-hidden">
-  <div class="mx-auto max-w-[1180px] px-5 sm:px-8">
-    <div class="reveal max-w-[62ch]">
-      <span class="font-mono text-xs tracking-wide text-violet">/ ИНТЕРФЕЙС</span>
-      <h2 class="mt-4 font-display font-medium text-[clamp(1.9rem,3.4vw,2.75rem)] leading-[1.1] tracking-[-0.01em]">
-        Всё видно и проверяется на месте
-      </h2>
-      <p class="mt-5 text-lg text-ink-soft leading-relaxed">
-        Пять вкладок: Основные, Словарь, История, Статистика, Модель. Каждое
-        слово словаря проверяется на живом тексте прямо в окне.
-        В версии 1.3.1 исправлены сохранение и удаление истории, применение
-        горячей клавиши и загрузка модели; технические имена C#, .NET и C++
-        сохраняются целиком при обучении из истории.
-        Нажмите на снимок, чтобы открыть его крупно.
-      </p>
-    </div>
-  </div>
-
-  <div class="reveal mt-14">
-    <div class="swiper shots-swiper mx-auto max-w-[1400px]">
-      <div class="swiper-wrapper items-start">
-
-        <div class="swiper-slide">
-          <figure class="flex flex-col items-center gap-3.5">
-            <img src="assets/screenshots/settings-general@2x.png?v=b8d8df3d" alt="Настройки Nota, вкладка «Основные»: клавиша диктовки, микрофон, язык, аватар и его непрозрачность, автозапуск, диагностический лог, детектор речи, версия" class="h-[clamp(230px,30vw,440px)] w-auto max-w-[78vw] cursor-zoom-in" />
-            <figcaption class="font-mono text-xs text-ink-soft text-center max-w-[32ch] leading-relaxed">Основные — клавиша, язык, аватар, детектор речи</figcaption>
-          </figure>
-        </div>
-
-        <div class="swiper-slide">
-          <figure class="flex flex-col items-center gap-3.5">
-            <img src="assets/screenshots/settings-dictionary@2x.png?v=97fff259" alt="Настройки Nota, вкладка «Словарь»: слова и варианты, во что их превращает модель, с проверкой фразы вживую" class="h-[clamp(230px,30vw,440px)] w-auto max-w-[78vw] cursor-zoom-in" />
-            <figcaption class="font-mono text-xs text-ink-soft text-center max-w-[32ch] leading-relaxed">Словарь — слова и во что их превращает модель</figcaption>
-          </figure>
-        </div>
-
-        <div class="swiper-slide">
-          <figure class="flex flex-col items-center gap-3.5">
-            <img src="assets/screenshots/settings-rules@2x.png?v=8f03ea82" alt="Настройки Nota, вкладка «Словарь», раздел «Регулярные выражения»: правила для опытных" class="h-[clamp(230px,30vw,440px)] w-auto max-w-[78vw] cursor-zoom-in" />
-            <figcaption class="font-mono text-xs text-ink-soft text-center max-w-[32ch] leading-relaxed">Регулярные выражения — для того, что словом не выразить</figcaption>
-          </figure>
-        </div>
-
-        <div class="swiper-slide">
-          <figure class="flex flex-col items-center gap-3.5">
-            <img src="assets/screenshots/settings-history@2x.png?v=ebd38640" alt="Настройки Nota, вкладка «История»: последние фразы; исправление фразы ложится в словарь" class="h-[clamp(230px,30vw,440px)] w-auto max-w-[78vw] cursor-zoom-in" />
-            <figcaption class="font-mono text-xs text-ink-soft text-center max-w-[32ch] leading-relaxed">История — последние фразы, правка учит словарь</figcaption>
-          </figure>
-        </div>
-
-        <div class="swiper-slide">
-          <figure class="flex flex-col items-center gap-3.5">
-            <img src="assets/screenshots/settings-stats@2x.png?v=212ee11c" alt="Настройки Nota, вкладка «Статистика»: слова, темп речи, сэкономленное время и график по дням" class="h-[clamp(230px,30vw,440px)] w-auto max-w-[78vw] cursor-zoom-in" />
-            <figcaption class="font-mono text-xs text-ink-soft text-center max-w-[32ch] leading-relaxed">Статистика — слова, темп речи, экономия времени</figcaption>
-          </figure>
-        </div>
-
-        <div class="swiper-slide">
-          <figure class="flex flex-col items-center gap-3.5">
-            <img src="assets/screenshots/settings-model@2x.png?v=ff684fce" alt="Настройки Nota, вкладка «Модель»: расположение и состояние файла весов" class="h-[clamp(230px,30vw,440px)] w-auto max-w-[78vw] cursor-zoom-in" />
-            <figcaption class="font-mono text-xs text-ink-soft text-center max-w-[32ch] leading-relaxed">Модель — расположение и состояние весов</figcaption>
-          </figure>
-        </div>
-
-        <div class="swiper-slide">
-          <figure class="flex flex-col items-center gap-3.5">
-            <div class="h-[clamp(230px,30vw,440px)] flex items-center">
-              <img src="assets/screenshots/avatar@2x.png?v=5e764ee4" alt="Аватар Nota на рабочем столе: телевизор с нотой на макушке, на зелёном экране — глаза" class="h-[158px] sm:h-[237px] w-auto max-w-[78vw] cursor-zoom-in" />
-            </div>
-            <figcaption class="font-mono text-xs text-ink-soft text-center max-w-[32ch] leading-relaxed">Аватар — висит на экране, моргает и слушает</figcaption>
-          </figure>
-        </div>
-
-      </div>
-      <div class="swiper-pagination"></div>
-      <div class="swiper-button-prev"></div>
-      <div class="swiper-button-next"></div>
-    </div>
-  </div>
-</section>
-
-<!-- ==================================================================== -->
-<!-- AVATAR                                                                -->
-<!-- ==================================================================== -->
-<section id="avatar" class="py-24 sm:py-32">
-  <div class="mx-auto max-w-[1180px] px-5 sm:px-8 grid lg:grid-cols-[0.95fr_1.05fr] gap-16 items-center">
-    <div class="reveal order-2 lg:order-1">
-      <span class="font-mono text-xs tracking-wide text-coral">/ АВАТАР</span>
-      <h2 class="mt-4 font-display font-medium text-[clamp(1.9rem,3.4vw,2.75rem)] leading-[1.1] tracking-[-0.01em]">
-        Видно, что Nota слушает, — ещё до конца фразы
-      </h2>
-      <p class="mt-5 text-lg text-ink-soft leading-relaxed">
-        На экране живёт маленький объёмный персонаж: телевизор с нотой на макушке,
-        ручками, ножками и зелёным экраном старого осциллографа. Пока вы говорите, по экрану бежит
-        волна голоса — догадываться, услышал ли микрофон, не нужно.
-      </p>
-      <p class="mt-4 text-ink-soft leading-relaxed">
-        Аватар можно утащить мышью в любое место любого монитора — он там и
-        останется. Фокус он не забирает: текст вставляется туда, где стоит курсор,
-        а клик по пустому месту рядом с ним попадает в окно под ним.
-        Мешает, например, при записи экрана — выключается одной галочкой в настройках.
-        А если просто заслоняет окно, его можно сделать полупрозрачным: стоит навести
-        на него курсор — он проявляется целиком, уберёте — снова бледнеет.
-      </p>
-      <p class="mt-4 text-ink-soft leading-relaxed">
-        И он под рукой. Текст ушёл не в то окно — дважды кликните по аватару, и
-        последняя диктовка окажется в буфере обмена: он подпрыгнет, а на экране
-        из-под листка выедет второй. Сразу после запуска копировать ещё нечего —
-        тогда мигает пустой листок, и буфер остаётся как был. Правый клик открывает
-        то же меню, что у значка в менюбаре.
-      </p>
-      <p class="mt-4 text-ink-soft leading-relaxed">
-        А ещё он живой. На клик подмигивает или улыбается, пока его тащат — пугается,
-        а после долгого полёта делает пируэт, и у него кружится голова. Если долго не диктовать, зевает, пританцовывает под свою
-        песенку и через полчаса засыпает; будит его клик или клавиша диктовки.
-      </p>
-      <p class="mt-4 text-ink-soft leading-relaxed">
-        Микрофон выбирается там же: встроенный, USB, Bluetooth или
-        виртуальный вход. Выбор действует только для Nota — системный вход
-        macOS остаётся прежним. После фразы Nota сразу отпускает микрофон:
-        AirPods возвращаются к обычному звуку, а не застревают в режиме
-        гарнитуры. А если микрофон отключится посреди фразы, запись
-        отменится с понятной ошибкой и обрывок не вставится.
-      </p>
-      <p class="mt-4 text-ink-soft leading-relaxed">
-        Текст вставляется и в виртуальную машину: в Linux под UTM он появляется
-        примерно на секунду позже обычного — Nota ждёт, пока UTM перенесёт буфер
-        обмена в гостевую систему, и вставляет так же, как ваше собственное ⌘V
-        в окне машины.
-      </p>
-
-      <div class="mt-8 rounded-3xl bg-mint-soft border border-mint/20 p-6">
-        <p class="font-mono text-xs text-mint tracking-wide">ВИСИТ ВЕСЬ ДЕНЬ</p>
-        <p class="mt-2.5 text-ink leading-relaxed">
-          В ожидании аватар почти не тратит батарею: картинка обновляется, только
-          когда он моргает. Кадры идут непрерывно лишь пока вы говорите и пока
-          фраза распознаётся. Заснув, он не тратит ничего: картинка застывает.
-        </p>
-      </div>
-    </div>
-
-    <div class="reveal order-1 lg:order-2 relative">
-      <div class="rounded-5xl bg-card border border-line/70 shadow-soft p-6 sm:p-8">
-        <div class="rounded-4xl avatar-stage grid place-items-center py-10">
-          <canvas id="avatar-demo" class="w-[184px] h-[224px] sm:w-[230px] sm:h-[280px] cursor-grab touch-none select-none"
-                  role="img" aria-label="Аватар Nota: проходит по очереди все состояния, отвечает на клик, перетаскивание и курсор"></canvas>
-        </div>
-        <div class="avatar-tabs mt-5" role="tablist" aria-label="Что показать">
-          <button type="button" class="avatar-tab is-current" data-tab="states" role="tab" aria-selected="true">Состояния</button>
-          <button type="button" class="avatar-tab" data-tab="reactions" role="tab" aria-selected="false">Реакции</button>
-        </div>
-        <ul id="avatar-states" class="mt-3 grid gap-1 text-sm" data-panel="states">
-          <li><button type="button" data-state="idle" class="avatar-state"><b>ожидание</b><span>моргает и иногда косится в сторону</span></button></li>
-          <li><button type="button" data-state="connecting" class="avatar-state"><b>микрофон</b><span>оглядывается, пока микрофон просыпается</span></button></li>
-          <li><button type="button" data-state="listening" class="avatar-state"><b>слушает</b><span>волна в такт голосу</span></button></li>
-          <li><button type="button" data-state="transcribing" class="avatar-state"><b>распознаёт</b><span>бегает огонёк</span></button></li>
-          <li><button type="button" data-state="done" class="avatar-state"><b>готово</b><span>галочка — текст уже в окне</span></button></li>
-          <li><button type="button" data-state="error" class="avatar-state"><b>ошибка</b><span>экран краснеет, причина — у значка в менюбаре</span></button></li>
+      <div data-panel="states">
+        <ul class="acts" id="av-states">
+          <li><button data-state="idle"><b>ожидание</b><span>моргает и иногда косится в сторону</span></button></li>
+          <li><button data-state="connecting"><b>микрофон</b><span>оглядывается, пока микрофон просыпается</span></button></li>
+          <li><button data-state="listening"><b>слушает</b><span>волна в такт голосу</span></button></li>
+          <li><button data-state="transcribing"><b>распознаёт</b><span>бегает огонёк</span></button></li>
+          <li><button data-state="done"><b>готово</b><span>галочка — текст уже в окне</span></button></li>
+          <li><button data-state="error"><b>ошибка</b><span>экран краснеет, причина — у значка в менюбаре</span></button></li>
         </ul>
-        <p class="mt-3 font-mono text-[11px] text-ink-faint" data-panel="states">Нажмите на состояние, чтобы задержаться на нём; <button type="button" id="avatar-cycle" class="underline decoration-line hover:text-ink">по кругу</button> — снова все подряд.</p>
-        <ul id="avatar-reactions" class="mt-3 grid gap-1 text-sm" data-panel="reactions" hidden>
-          <li><button type="button" data-trigger="click" class="avatar-state"><b>клик</b><span>подмигивает, улыбается или смотрит звёздочками</span></button></li>
-          <li><button type="button" data-trigger="dbl" class="avatar-state"><b>двойной клик</b><span>копирует последнюю диктовку — подпрыгивает, на экране два листка</span></button></li>
-          <li><button type="button" data-trigger="empty" class="avatar-state"><b>копировать нечего</b><span>диктовок ещё не было — мигает пустой листок</span></button></li>
-          <li><button type="button" data-trigger="drag" class="avatar-state"><b>тащат</b><span>пугается или радуется полёту</span></button></li>
-          <li><button type="button" data-trigger="drop" class="avatar-state"><b>отпустили</b><span>помехи, пируэт с головокружением или «уф»</span></button></li>
-          <li><button type="button" data-trigger="hover" class="avatar-state"><b>курсор</b><span>задержался на секунду — прищурится с подозрением</span></button></li>
-          <li><button type="button" data-trigger="burst" class="avatar-state"><b>много кликов</b><span>пять подряд — «ну хватит», сердится или смущается</span></button></li>
-          <li><button type="button" data-trigger="idle" class="avatar-state"><b>простой</b><span>зевает, пританцовывает, чихает, через полчаса засыпает</span></button></li>
+        <p class="av-note">Нажмите на состояние, чтобы задержаться на нём; <button id="av-cycle">по кругу</button> — снова все подряд.</p>
+      </div>
+      <div data-panel="reactions" hidden>
+        <ul class="acts" id="av-reactions">
+          <li><button data-trigger="click"><b>клик</b><span>подмигивает, улыбается или смотрит звёздочками</span></button></li>
+          <li><button data-trigger="dbl"><b>двойной клик</b><span>копирует последнюю диктовку — подпрыгивает</span></button></li>
+          <li><button data-trigger="empty"><b>копировать нечего</b><span>диктовок ещё не было — мигает пустой листок</span></button></li>
+          <li><button data-trigger="drag"><b>тащат</b><span>пугается или радуется полёту</span></button></li>
+          <li><button data-trigger="drop"><b>отпустили</b><span>помехи, пируэт с головокружением или «уф»</span></button></li>
+          <li><button data-trigger="hover"><b>курсор</b><span>задержался на секунду — прищурится</span></button></li>
+          <li><button data-trigger="burst"><b>много кликов</b><span>пять подряд — «ну хватит»</span></button></li>
+          <li><button data-trigger="idle"><b>простой</b><span>зевает, пританцовывает, чихает, засыпает</span></button></li>
         </ul>
-        <p class="mt-3 font-mono text-[11px] text-ink-faint" data-panel="reactions" hidden>Аватар выше настоящий: нажмите на него, нажмите дважды, потащите или наведите курсор и подождите.</p>
+        <p class="av-note">Аватар выше настоящий: нажмите на него, нажмите дважды, потащите или наведите курсор и подождите.</p>
       </div>
+    </div>
+    <div class="facts">
+      <div><h3>Живёт там, куда поставили</h3><p>Аватар можно утащить мышью в любое место любого монитора — он там и останется. Фокус он не забирает: текст вставляется туда, где стоит курсор, а клик по пустому месту рядом с ним попадает в окно под ним. Мешает, например, при записи экрана — выключается одной галочкой в настройках. А если просто заслоняет окно, его можно сделать полупрозрачным: стоит навести на него курсор — он проявляется целиком, уберёте — снова бледнеет.</p></div>
+      <div><h3>Последняя диктовка — под рукой</h3><p>Текст ушёл не в то окно — дважды кликните по аватару, и последняя диктовка окажется в буфере обмена: он подпрыгнет, а на экране из-под листка выедет второй. Сразу после запуска копировать ещё нечего — тогда мигает пустой листок, и буфер остаётся как был. Правый клик открывает то же меню, что у значка в менюбаре.</p></div>
+      <div><h3>А ещё он живой</h3><p>На клик подмигивает или улыбается, пока его тащат — пугается, а после долгого полёта делает пируэт, и у него кружится голова. Если долго не диктовать, зевает, пританцовывает под свою песенку и через полчаса засыпает; будит его клик или клавиша диктовки.</p></div>
+      <div><h3>Любой микрофон</h3><p>Встроенный, USB, Bluetooth или виртуальный вход. Выбор действует только для Nota — системный вход macOS остаётся прежним. После фразы Nota сразу отпускает микрофон: AirPods возвращаются к обычному звуку, а не застревают в режиме гарнитуры. А если микрофон отключится посреди фразы, запись отменится с понятной ошибкой и обрывок не вставится.</p></div>
+      <div><h3>Вставляет и в виртуальную машину</h3><p>В Linux под UTM текст появляется примерно на секунду позже обычного — Nota ждёт, пока UTM перенесёт буфер обмена в гостевую систему, и вставляет так же, как ваше собственное ⌘V в окне машины.</p></div>
+      <div><h3>Висит весь день</h3><p>В ожидании аватар почти не тратит батарею: картинка обновляется, только когда он моргает. Кадры идут непрерывно лишь пока вы говорите и пока фраза распознаётся. Заснув, он не тратит ничего: картинка застывает.</p></div>
     </div>
   </div>
-</section>
+</div></section>
 
-<!-- ==================================================================== -->
-<!-- STATS                                                                 -->
-<!-- ==================================================================== -->
-<section id="stats" class="py-24 sm:py-32 bg-bg-alt">
-  <div class="mx-auto max-w-[1180px] px-5 sm:px-8">
-    <div class="reveal max-w-[62ch]">
-      <span class="font-mono text-xs tracking-wide text-mint">/ СТАТИСТИКА</span>
-      <h2 class="mt-4 font-display font-medium text-[clamp(1.9rem,3.4vw,2.75rem)] leading-[1.1] tracking-[-0.01em]">
-        Сколько сказано и сколько времени это сэкономило
-      </h2>
-      <p class="mt-5 text-lg text-ink-soft leading-relaxed">
-        Слова, темп речи, экономия против набора руками и серия дней подряд —
-        во вкладке «Статистика», график на Swift Charts.
-      </p>
+<!-- ============ СТАТИСТИКА ============ -->
+<section class="sec" id="stats"><div class="wrap">
+  <h2>Сколько сказано и сколько времени это сэкономило</h2>
+  <p class="lead">Слова, темп речи, экономия против набора руками и серия дней подряд — во вкладке «Статистика», график на Swift Charts.</p>
+  <div class="st-grid">
+    <div class="chart">
+      <div class="cap"><span>Слов в день, последние 14</span><span>иллюстрация</span></div>
+      <div class="bars" id="bars"></div>
+      <p>Реальный график — с вашими цифрами — во вкладке «Статистика» окна настроек.</p>
     </div>
-
-    <div class="mt-14 grid lg:grid-cols-[1.1fr_0.9fr] gap-6">
-      <!-- «график» -->
-      <div class="reveal rounded-4xl bg-card border border-line/70 shadow-card p-7 sm:p-9">
-        <div class="flex items-baseline justify-between">
-          <p class="font-mono text-xs text-ink-faint">СЛОВ В ДЕНЬ, ПОСЛЕДНИЕ 14</p>
-          <p class="font-mono text-xs text-ink-faint">иллюстрация</p>
-        </div>
-        <div class="mt-8 flex items-end gap-2 sm:gap-3 h-40">
-          <div class="flex-1 rounded-t-lg bg-violet-soft" style="height:38%"></div>
-          <div class="flex-1 rounded-t-lg bg-violet-soft" style="height:52%"></div>
-          <div class="flex-1 rounded-t-lg bg-violet/40" style="height:44%"></div>
-          <div class="flex-1 rounded-t-lg bg-violet-soft" style="height:70%"></div>
-          <div class="flex-1 rounded-t-lg bg-violet-soft" style="height:58%"></div>
-          <div class="flex-1 rounded-t-lg bg-violet/40" style="height:66%"></div>
-          <div class="flex-1 rounded-t-lg bg-violet" style="height:92%"></div>
-          <div class="flex-1 rounded-t-lg bg-violet-soft" style="height:48%"></div>
-          <div class="flex-1 rounded-t-lg bg-violet-soft" style="height:60%"></div>
-          <div class="flex-1 rounded-t-lg bg-violet/40" style="height:40%"></div>
-          <div class="flex-1 rounded-t-lg bg-violet-soft" style="height:75%"></div>
-          <div class="flex-1 rounded-t-lg bg-violet-soft" style="height:64%"></div>
-          <div class="flex-1 rounded-t-lg bg-violet/40" style="height:50%"></div>
-          <div class="flex-1 rounded-t-lg bg-violet" style="height:82%"></div>
-        </div>
-        <p class="mt-6 text-sm text-ink-soft">
-          Реальный график — с вашими цифрами — во вкладке «Статистика» окна настроек.
-        </p>
-      </div>
-
-      <!-- карточки метрик -->
-      <div class="reveal-stagger grid grid-cols-2 gap-4">
-        <div class="rounded-3xl bg-card border border-line/70 shadow-card p-5">
-          <p class="font-mono text-xs text-ink-faint">темп речи</p>
-          <p class="mt-2 font-display text-2xl">128 <span class="text-base text-ink-soft font-sans">слов/мин</span></p>
-        </div>
-        <div class="rounded-3xl bg-card border border-line/70 shadow-card p-5">
-          <p class="font-mono text-xs text-ink-faint">серия дней</p>
-          <p class="mt-2 font-display text-2xl">12 <span class="text-base text-ink-soft font-sans">подряд</span></p>
-        </div>
-        <div class="rounded-3xl bg-card border border-line/70 shadow-card p-5">
-          <p class="font-mono text-xs text-ink-faint">сэкономлено</p>
-          <p class="mt-2 font-display text-2xl">3.4 <span class="text-base text-ink-soft font-sans">ч/нед</span></p>
-        </div>
-        <div class="rounded-3xl bg-card border border-line/70 shadow-card p-5">
-          <p class="font-mono text-xs text-ink-faint">распознавание</p>
-          <p class="mt-2 font-display text-2xl">1.5 <span class="text-base text-ink-soft font-sans">с в среднем</span></p>
-        </div>
-      </div>
+    <div class="nums">
+      <div><p>темп речи</p><p><b data-n="128">128</b><span>слов/мин</span></p></div>
+      <div><p>серия дней</p><p><b data-n="12">12</b><span>подряд</span></p></div>
+      <div><p>сэкономлено</p><p><b data-n="3.4">3.4</b><span>ч/нед</span></p></div>
+      <div><p>распознавание</p><p><b data-n="1.5">1.5</b><span>с в среднем</span></p></div>
     </div>
   </div>
-</section>
-
+</div></section>
 </main>
 
-<!-- ==================================================================== -->
-<!-- FOOTER                                                                -->
-<!-- ==================================================================== -->
-<footer class="border-t border-line/70">
-  <div class="mx-auto max-w-[1180px] px-5 sm:px-8 py-16 grid md:grid-cols-[1.1fr_0.9fr] gap-12">
-    <div class="reveal">
-      <a href="#top" class="flex items-center gap-2.5 font-display text-lg font-medium tracking-tight">
-        <img src="assets/icons/nota-256.png?v=54fc9585" alt="Nota" width="32" height="32" class="w-8 h-8 rounded-xl" />
-        Nota
-      </a>
-      <p class="mt-4 text-ink-soft max-w-[42ch] leading-relaxed">
-        Собрано на whisper.cpp. Работает без сети, кроме одной загрузки весов модели при установке.
-      </p>
-      <p class="mt-6 text-sm text-ink-faint">
-        Никита Киселев ·
-        <a href="mailto:kiselev2008@gmail.com" class="underline decoration-line hover:text-ink hover:decoration-ink transition-colors">kiselev2008@gmail.com</a>
-      </p>
+<!-- ============ УСТАНОВКА И ПОДВАЛ ============ -->
+<footer class="sec" id="get"><div class="wrap">
+  <h2>Ставится одной командой</h2>
+  <p class="lead">Приложение не подписано сертификатом Apple для распространения, поэтому скачанное браузером macOS заблокирует. Установите командой — так файл не помечается карантином.</p>
+  <div class="cmd" id="cmd">curl -L https://github.com/nikitakiselev/nota-app/releases/latest/download/Nota.zip -o /tmp/Nota.zip
+unzip -q /tmp/Nota.zip -d /Applications
+open /Applications/Nota.app</div>
+  <div class="get-row">
+    <button class="btn light" id="copy">Скопировать команду</button>
+    <a class="btn ghost" href="https://github.com/nikitakiselev/nota-app/releases/latest">Скачать Nota.zip</a>
+    <a class="btn ghost" href="https://pay.cloudtips.ru/p/e2a1bf31" target="_blank" rel="noopener">Купить разработчику кофе</a>
+  </div>
+  <div class="foot">
+    <div>
+      <p><b>Nota</b></p>
+      <p style="margin-top:10px">Собрано на whisper.cpp. Работает без сети, кроме одной загрузки весов модели при установке.</p>
+      <p style="margin-top:10px">Никита Киселев, <a href="mailto:kiselev2008@gmail.com">kiselev2008@gmail.com</a></p>
     </div>
-
-    <div class="reveal">
-      <p class="font-mono text-xs tracking-wide text-ink-faint">СИСТЕМНЫЕ ТРЕБОВАНИЯ</p>
-      <ul class="mt-4 space-y-2.5 text-ink-soft">
-        <li class="flex items-center gap-2.5"><span class="w-1.5 h-1.5 rounded-full bg-violet"></span>macOS 15 или новее</li>
-        <li class="flex items-center gap-2.5"><span class="w-1.5 h-1.5 rounded-full bg-violet"></span>Apple Silicon (M-серия)</li>
-        <li class="flex items-center gap-2.5"><span class="w-1.5 h-1.5 rounded-full bg-violet"></span>~1 ГБ на диске под модель</li>
-        <li class="flex items-center gap-2.5"><span class="w-1.5 h-1.5 rounded-full bg-violet"></span>~1.5 ГБ ОЗУ, пока приложение запущено</li>
-      </ul>
-      <p class="mt-6 rounded-2xl border border-dashed border-line bg-bg-alt/70 px-4 py-3 text-sm text-ink-soft">
-        Приложение бесплатное. Если оно вам пригодилось —
-        <a href="https://pay.cloudtips.ru/p/e2a1bf31" target="_blank" rel="noopener"
-           class="underline underline-offset-2 hover:text-ink">купите разработчику кофе</a>.
-      </p>
+    <div>
+      <p><b>Системные требования</b></p>
+      <ul><li>macOS 15 или новее</li><li>Apple Silicon (M-серия)</li><li>~1 ГБ на диске под модель</li><li>~1.5 ГБ ОЗУ, пока приложение запущено</li></ul>
+      <p>Приложение бесплатное. Если оно вам пригодилось — <a href="https://pay.cloudtips.ru/p/e2a1bf31" target="_blank" rel="noopener">купите разработчику кофе</a>.</p>
     </div>
   </div>
+  <div class="fine"><span>© 2026 Nota. Личный проект, распространяется как есть.</span><span>whisper.cpp, Swift 6.2, без сборщиков</span></div>
+</div></footer>
 
-  <div class="border-t border-line/70">
-    <div class="mx-auto max-w-[1180px] px-5 sm:px-8 py-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-ink-faint">
-      <p>© <span id="year">2026</span> Nota. Личный проект, распространяется как есть.</p>
-      <p class="font-mono text-xs">whisper.cpp · Swift 6.2 · без сборщиков</p>
-    </div>
-  </div>
-</footer>
-
-<script src="assets/vendor/swiper/swiper-bundle.min.js?v=985f1224"></script>
-<div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-label="Скриншот крупно" hidden>
-  <figure class="lightbox-figure">
-    <img alt="" />
-    <figcaption class="lightbox-caption"></figcaption>
-  </figure>
-  <button type="button" class="lightbox-btn lightbox-prev" aria-label="Предыдущий снимок">‹</button>
-  <button type="button" class="lightbox-btn lightbox-next" aria-label="Следующий снимок">›</button>
-  <button type="button" class="lightbox-btn lightbox-close" aria-label="Закрыть">×</button>
-</div>
 <script src="js/avatar.js?v=95da4591"></script>
-<script src="js/main.js?v=922b498d"></script>
+<script src="js/main.js?v=0c6fe46a"></script>
 </body>
 </html>
